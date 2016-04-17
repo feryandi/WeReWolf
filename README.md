@@ -1,0 +1,2 @@
+# WeReWolf
+Distributed Systems - Paxos
