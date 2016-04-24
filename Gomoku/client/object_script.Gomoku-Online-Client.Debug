@@ -1,0 +1,15 @@
+INPUT(
+./debug\main.o
+./debug\login.o
+./debug\lobby.o
+./debug\game.o
+./debug\client.o
+./debug\interface.o
+./debug\gameover.o
+./debug\moc_login.o
+./debug\moc_lobby.o
+./debug\moc_game.o
+./debug\moc_client.o
+./debug\moc_interface.o
+./debug\moc_gameover.o
+);

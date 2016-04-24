@@ -1,0 +1,15 @@
+INPUT(
+./release\main.o
+./release\login.o
+./release\lobby.o
+./release\game.o
+./release\client.o
+./release\interface.o
+./release\gameover.o
+./release\moc_login.o
+./release\moc_lobby.o
+./release\moc_game.o
+./release\moc_client.o
+./release\moc_interface.o
+./release\moc_gameover.o
+);
