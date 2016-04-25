@@ -21,7 +21,10 @@ void handler_server::doConnect(QString server_ip, quint16 server_port)
     }
 }
 
-
+QJsonArray handler_server::getClients()
+{
+    return clients;
+}
 
 void handler_server::statusConnected()
 {
@@ -73,9 +76,15 @@ void handler_server::readMessage()
             } else if (last_sent_method == "leave" && status == "ok"){
 
             } else if (last_sent_method == "ready" && status == "ok"){
-
+                emit on_ready();
             } else if (last_sent_method == "client_address" && status == "ok"){
-
+                //clients = json_object.value("clients").toArray();
+                QJsonObject client_;
+                for (int i=0; i<json_object.value("clients").toArray().size(); i++){
+                    client_ = json_object.value("clients").toArray().at(i).toObject();
+                    clients.push_back(client_);
+                }
+                emit on_get_clients();
             } else if (status == "fail" || status == "error"){
 
             }
@@ -84,7 +93,10 @@ void handler_server::readMessage()
             method = json_object.value("method");
 
             if (method == "start"){
-
+                /* Send list clients message */
+                QJsonObject json_object_;
+                json_object_.insert("method", "client_address");
+                sendMessageJSON(json_object_);
             } else if (method == "change_phase"){
 
             } else if (method == "game_over"){

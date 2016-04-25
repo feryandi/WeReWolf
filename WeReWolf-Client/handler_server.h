@@ -14,9 +14,13 @@ class handler_server : public QObject
     public:
         explicit handler_server(QObject *parent = 0);
         void doConnect(QString server_ip, quint16 server_port);
+        QJsonArray getClients();
 
     signals:
         void on_login();
+        void on_ready();
+        void on_get_clients();
+
 
     public slots:
         void statusConnected();
@@ -27,6 +31,7 @@ class handler_server : public QObject
     private:
         QTcpSocket *socket;
         QString last_sent_method;
+        QJsonArray clients;
         int player_id;
 };
 
