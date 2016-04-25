@@ -15,10 +15,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
         login.cpp \
     handler_server.cpp \
-    handler_client.cpp
+    handler_client.cpp \
+    game.cpp
 
 HEADERS  += login.h \
     handler_server.h \
-    handler_client.h
+    handler_client.h \
+    game.h
 
-FORMS    += login.ui
+FORMS    += login.ui \
+    game.ui
