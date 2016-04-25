@@ -20,7 +20,7 @@ void login::on_buttonPlay_clicked()
     QString server_ip = ui->textServerIP->text();
     qint16 server_port = ui->textServerPort->text().toInt();
     qint16 client_port = ui->textClientPort->text().toInt();
-    connection.doConnect(server_ip, server_port);
+    connection.doConnect(server_ip, server_port, client_port);
 
     QJsonObject json_object;
     json_object.insert("method", "join");

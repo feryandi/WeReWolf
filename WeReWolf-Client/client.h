@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QTcpSocket>
+#include <QUdpSocket>
 #include <QDebug>
 #include <QJsonDocument>
 #include <QJsonValue>
@@ -15,7 +16,7 @@ class client : public QObject
 	    Q_OBJECT
 	public:
 	    explicit client(QObject *parent = 0);
-	    void doConnect(QString server_ip, quint16 server_port);
+        void doConnect(QString server_ip, quint16 server_port, quint16 client_port);
 		
 
 	signals:
@@ -27,7 +28,8 @@ class client : public QObject
 		void readMessage();
 
 	private:
-		QTcpSocket *socket;
+        QTcpSocket *socket_tcp;
+        QUdpSocket *socket_udp;
 		
 
 };

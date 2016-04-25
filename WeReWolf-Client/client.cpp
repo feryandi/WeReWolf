@@ -6,19 +6,24 @@ client::client(QObject *parent) : QObject(parent)
 {
 }
 
-void client::doConnect(QString server_ip, quint16 server_port)
+void client::doConnect(QString server_ip, quint16 server_port, quint16 client_port)
 {
-	socket = new QTcpSocket(this);
-	connect(socket, SIGNAL(connected()),this, SLOT(connected()));
-	connect(socket, SIGNAL(disconnected()),this, SLOT(disconnected()));
-	connect(socket, SIGNAL(readyRead()),this, SLOT(readMessage()));
+    /* Connection to Server (TCP) */
+    socket_tcp = new QTcpSocket(this);
+    connect(socket_tcp, SIGNAL(connected()),this, SLOT(connected()));
+    connect(socket_tcp, SIGNAL(disconnected()),this, SLOT(disconnected()));
+    connect(socket_tcp, SIGNAL(readyRead()),this, SLOT(readMessage()));
 
 	qDebug() << "connecting...";
 
-	socket->connectToHost(server_ip, server_port);
-	if (!socket->waitForConnected(3000)){
-		qDebug() << "Error: " << socket->errorString();
+    socket_tcp->connectToHost(server_ip, server_port);
+    if (!socket_tcp->waitForConnected(3000)){
+        qDebug() << "Error: " << socket_tcp->errorString();
 	}
+
+    /* Setup Client-Client Connection (UDP) */
+    socket_udp = new QUdpSocket(this);
+    socket_udp->bind(QHostAddress::Any, client_port);
 }
 
 
@@ -41,14 +46,14 @@ void client::sendMessageJSONObject(QJsonObject message)
 
 	QJsonDocument json_document;
 	json_document.setObject(message);
-	if (socket->write(json_document.toJson(QJsonDocument::Compact) + "\r\n") < 0){
-		qDebug() << "Error: " << socket->errorString();
+    if (socket_tcp->write(json_document.toJson(QJsonDocument::Compact) + "\r\n") < 0){
+        qDebug() << "Error: " << socket_tcp->errorString();
 	}
 }
 
 void client::readMessage()
 {
-	QByteArray message = socket->readAll();
+    QByteArray message = socket_tcp->readAll();
 
 	qDebug() << "reading...";
 	//qDebug() << message;
