@@ -14,10 +14,17 @@ login::~login()
     delete ui;
 }
 
+void login::do_destroy()
+{
+    delete this;
+}
+
 void login::on_buttonPlay_clicked()
 {
     /* Setup information */
-    nickname = ui->textNickname->text();
+    if (ui->textNickname->text() != ""){
+        nickname = ui->textNickname->text();
+    }
     QString server_ip = ui->textServerIP->text();
     qint16 server_port = ui->textServerPort->text().toInt();
     qint16 client_port = ui->textClientPort->text().toInt();

@@ -16,15 +16,17 @@ class handler_server : public QObject
         void doConnect(QString server_ip, quint16 server_port);
 
     signals:
+        void on_login();
 
     public slots:
         void statusConnected();
         void statusDisconnected();
-        void readMessage();
         void sendMessageJSON(QJsonObject message);
+        void readMessage();
 
     private:
         QTcpSocket *socket;
+        QString last_sent_method;
         int player_id;
 };
 

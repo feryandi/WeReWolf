@@ -18,6 +18,7 @@ public:
     ~login();
 
 private slots:
+    void do_destroy();
     void on_buttonPlay_clicked();
 
 private:
