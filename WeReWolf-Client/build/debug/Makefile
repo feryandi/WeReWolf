@@ -50,13 +50,17 @@ OBJECTS_DIR   = ./
 
 SOURCES       = ../../main.cpp \
 		../../login.cpp \
-		../../client.cpp moc_login.cpp \
-		moc_client.cpp
+		../../handler_server.cpp \
+		../../handler_client.cpp moc_login.cpp \
+		moc_handler_server.cpp \
+		moc_handler_client.cpp
 OBJECTS       = main.o \
 		login.o \
-		client.o \
+		handler_server.o \
+		handler_client.o \
 		moc_login.o \
-		moc_client.o
+		moc_handler_server.o \
+		moc_handler_client.o
 DIST          = /usr/lib/qt/mkspecs/features/spec_pre.prf \
 		/usr/lib/qt/mkspecs/common/unix.conf \
 		/usr/lib/qt/mkspecs/common/linux.conf \
@@ -161,9 +165,11 @@ DIST          = /usr/lib/qt/mkspecs/features/spec_pre.prf \
 		/usr/lib/qt/mkspecs/features/yacc.prf \
 		/usr/lib/qt/mkspecs/features/lex.prf \
 		../../../../WeReWolf-Client.pro ../../login.h \
-		../../client.h ../../main.cpp \
+		../../handler_server.h \
+		../../handler_client.h ../../main.cpp \
 		../../login.cpp \
-		../../client.cpp
+		../../handler_server.cpp \
+		../../handler_client.cpp
 QMAKE_TARGET  = WeReWolf-Client
 DESTDIR       = 
 TARGET        = WeReWolf-Client
@@ -406,8 +412,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents ../../login.h ../../client.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../../main.cpp ../../login.cpp ../../client.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../../login.h ../../handler_server.h ../../handler_client.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../../main.cpp ../../login.cpp ../../handler_server.cpp ../../handler_client.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../../login.ui $(DISTDIR)/
 
 
@@ -431,15 +437,19 @@ check: first
 
 compiler_rcc_make_all:
 compiler_rcc_clean:
-compiler_moc_header_make_all: moc_login.cpp moc_client.cpp
+compiler_moc_header_make_all: moc_login.cpp moc_handler_server.cpp moc_handler_client.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_login.cpp moc_client.cpp
-moc_login.cpp: ../../client.h \
+	-$(DEL_FILE) moc_login.cpp moc_handler_server.cpp moc_handler_client.cpp
+moc_login.cpp: ../../handler_server.h \
+		../../handler_client.h \
 		../../login.h
 	/usr/lib/qt/bin/moc $(DEFINES) -I/usr/lib/qt/mkspecs/linux-g++ -I/run/media/nithoalif/Data/Dev/kuliah/sistem-paralel-dan-terdistribusi/WeReWolf/WeReWolf-Client -I/usr/include/qt -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtCore -I. -I/usr/include/c++/5.3.0 -I/usr/include/c++/5.3.0/x86_64-unknown-linux-gnu -I/usr/include/c++/5.3.0/backward -I/usr/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/include-fixed -I/usr/include ../../login.h -o moc_login.cpp
 
-moc_client.cpp: ../../client.h
-	/usr/lib/qt/bin/moc $(DEFINES) -I/usr/lib/qt/mkspecs/linux-g++ -I/run/media/nithoalif/Data/Dev/kuliah/sistem-paralel-dan-terdistribusi/WeReWolf/WeReWolf-Client -I/usr/include/qt -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtCore -I. -I/usr/include/c++/5.3.0 -I/usr/include/c++/5.3.0/x86_64-unknown-linux-gnu -I/usr/include/c++/5.3.0/backward -I/usr/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/include-fixed -I/usr/include ../../client.h -o moc_client.cpp
+moc_handler_server.cpp: ../../handler_server.h
+	/usr/lib/qt/bin/moc $(DEFINES) -I/usr/lib/qt/mkspecs/linux-g++ -I/run/media/nithoalif/Data/Dev/kuliah/sistem-paralel-dan-terdistribusi/WeReWolf/WeReWolf-Client -I/usr/include/qt -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtCore -I. -I/usr/include/c++/5.3.0 -I/usr/include/c++/5.3.0/x86_64-unknown-linux-gnu -I/usr/include/c++/5.3.0/backward -I/usr/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/include-fixed -I/usr/include ../../handler_server.h -o moc_handler_server.cpp
+
+moc_handler_client.cpp: ../../handler_client.h
+	/usr/lib/qt/bin/moc $(DEFINES) -I/usr/lib/qt/mkspecs/linux-g++ -I/run/media/nithoalif/Data/Dev/kuliah/sistem-paralel-dan-terdistribusi/WeReWolf/WeReWolf-Client -I/usr/include/qt -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtCore -I. -I/usr/include/c++/5.3.0 -I/usr/include/c++/5.3.0/x86_64-unknown-linux-gnu -I/usr/include/c++/5.3.0/backward -I/usr/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/include-fixed -I/usr/include ../../handler_client.h -o moc_handler_client.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -460,22 +470,30 @@ compiler_clean: compiler_moc_header_clean compiler_uic_clean
 ####### Compile
 
 main.o: ../../main.cpp ../../login.h \
-		../../client.h
+		../../handler_server.h \
+		../../handler_client.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../../main.cpp
 
 login.o: ../../login.cpp ../../login.h \
-		../../client.h \
+		../../handler_server.h \
+		../../handler_client.h \
 		ui_login.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o login.o ../../login.cpp
 
-client.o: ../../client.cpp ../../client.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o client.o ../../client.cpp
+handler_server.o: ../../handler_server.cpp ../../handler_server.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o handler_server.o ../../handler_server.cpp
+
+handler_client.o: ../../handler_client.cpp ../../handler_client.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o handler_client.o ../../handler_client.cpp
 
 moc_login.o: moc_login.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_login.o moc_login.cpp
 
-moc_client.o: moc_client.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_client.o moc_client.cpp
+moc_handler_server.o: moc_handler_server.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_handler_server.o moc_handler_server.cpp
+
+moc_handler_client.o: moc_handler_client.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_handler_client.o moc_handler_client.cpp
 
 ####### Install
 

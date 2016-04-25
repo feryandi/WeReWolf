@@ -99,7 +99,7 @@ public:
         textNickname->setFocusPolicy(Qt::StrongFocus);
         labelTitle = new QLabel(centralWidget);
         labelTitle->setObjectName(QStringLiteral("labelTitle"));
-        labelTitle->setGeometry(QRect(40, 10, 241, 31));
+        labelTitle->setGeometry(QRect(40, -10, 241, 31));
         QFont font2;
         font2.setFamily(QStringLiteral("Lato"));
         font2.setPointSize(20);

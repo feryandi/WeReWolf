@@ -2,7 +2,8 @@
 #define LOGIN_H
 
 #include <QMainWindow>
-#include "client.h"
+#include "handler_server.h"
+#include "handler_client.h"
 
 namespace Ui {
 class login;

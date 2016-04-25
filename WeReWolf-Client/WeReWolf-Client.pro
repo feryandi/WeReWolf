@@ -14,9 +14,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         login.cpp \
-    client.cpp
+    handler_server.cpp \
+    handler_client.cpp
 
 HEADERS  += login.h \
-    client.h
+    handler_server.h \
+    handler_client.h
 
 FORMS    += login.ui

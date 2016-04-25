@@ -241,7 +241,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Client Port</string>
+     <string>Listen Port</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="textClientPort">
