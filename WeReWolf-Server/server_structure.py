@@ -66,7 +66,7 @@ class GameServer:
 
 		for player in self.players:
 			if ( player != "" ):
-				player.getIPort().send(self.startGameToJSON(player.getRole, wfplayer))			
+				player.getIPort().send(self.startGameToJSON(player.getRole(), wfplayer))			
 
 		return None
 
@@ -172,10 +172,9 @@ class MessageServer:
 
 		elif msg['method'] == 'ready':
 			(GameServer.getPlayerByPID(self.clientid)).setReadiness(True)
+			self.sendResponse(clientsocket, json.dumps({"status":"ok", "description":"waiting for other player to start"}))
 			if ( (GameServer.isAllReady()) and (GameServer.getTotalPlayer() >= 1) ):
 				GameServer.startGame()
-			else:
-				self.sendResponse(clientsocket, json.dumps({"status":"ok", "description":"waiting for other player to start"}))
 
 		elif msg['method'] == 'client_address':
 			self.sendResponse(clientsocket, self.clientsToJSON(GameServer))
