@@ -46,6 +46,9 @@ class GameServer:
 		for player in self.players:
 			if ( player != "" ):
 				# player.getIPort().send(msg + "\r\n")
+				return None
+
+		return None
 
 	def newPlayer (self, name, iport, udip, udport):
 		i = 0
