@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QTcpSocket>
+#include <QHostAddress>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -14,7 +15,9 @@ class handler_server : public QObject
     public:
         explicit handler_server(QObject *parent = 0);
         void doConnect(QString server_ip, quint16 server_port);
+        QString getLocalAddress();
         QJsonArray getClients();
+
 
     signals:
         void on_login();
@@ -30,6 +33,7 @@ class handler_server : public QObject
 
     private:
         QTcpSocket *socket;
+        QHostAddress local_address;
         QString last_sent_method;
         QJsonArray clients;
         int player_id;

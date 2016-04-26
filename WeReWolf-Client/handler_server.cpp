@@ -18,7 +18,14 @@ void handler_server::doConnect(QString server_ip, quint16 server_port)
     socket->connectToHost(server_ip, server_port);
     if (!socket->waitForConnected(3000)){
         qDebug() << "Error: " << socket->errorString();
+    } else{
+        local_address = socket->localAddress();
     }
+}
+
+QString handler_server::getLocalAddress()
+{
+    return local_address.toString();
 }
 
 QJsonArray handler_server::getClients()

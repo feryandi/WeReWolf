@@ -19,7 +19,7 @@ game::~game()
 
 void game::do_wait_until_start()
 {
-    ui->labelTime->setText("Please wait for other players...");
+    ui->labelTime->setText("Please wait for other players...    ");
     ui->buttonVote->setDisabled(true);
 }
 

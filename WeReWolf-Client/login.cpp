@@ -27,15 +27,17 @@ void login::on_buttonPlay_clicked()
     }
     QString server_ip = ui->textServerIP->text();
     qint16 server_port = ui->textServerPort->text().toInt();
-    qint16 client_port = ui->textClientPort->text().toInt();
+    QString client_port = ui->textClientPort->text();
 
     /* Establish connection */
     connection_server.doConnect(server_ip, server_port);
-    connection_client.doListen(client_port);
+    connection_client.doListen(client_port.toInt());
 
     /* Send join message */
     QJsonObject json_object;
     json_object.insert("method", "join");
     json_object.insert("username", nickname.toStdString().c_str());
+    json_object.insert("udp_address", connection_server.getLocalAddress().toStdString().c_str());
+    json_object.insert("udp_port", client_port.toStdString().c_str());
     connection_server.sendMessageJSON(json_object);
 }
