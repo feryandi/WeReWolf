@@ -76,7 +76,7 @@ class GameServer:
 		this.role = role
 
 		if ( role == "werewolf" ):
-			
+			return None
 
 		msg = json.dumps(msgobj.__dict__)
 		return msg
