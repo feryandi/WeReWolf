@@ -81,7 +81,7 @@ class GameServer:
 
 		msgobj = message()
 
-		self.role = role
+		msgobj.role = role
 
 		if ( role == "werewolf" ):
 			for wf in wfplayer:

@@ -18,7 +18,7 @@ class handler_server : public QObject
         void doConnect(QString server_ip, quint16 server_port);
         QString getLocalAddress();
         QJsonArray getClients();
-
+        QString getRole();
 
     signals:
         void on_fail_or_error(QString);
@@ -26,6 +26,7 @@ class handler_server : public QObject
         void on_ready();
         void on_get_clients();
 
+        void on_start();
 
     public slots:
         void statusConnected();
@@ -38,6 +39,7 @@ class handler_server : public QObject
         QHostAddress local_address;
         QString last_sent_method;
         QJsonArray clients;
+        QString player_role;
         int player_id;
 };
 

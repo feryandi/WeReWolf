@@ -54,9 +54,9 @@
    <widget class="QLabel" name="labelTime">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>30</x>
       <y>60</y>
-      <width>381</width>
+      <width>361</width>
       <height>20</height>
      </rect>
     </property>
@@ -113,7 +113,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>90</y>
+      <y>110</y>
       <width>381</width>
       <height>71</height>
      </rect>
@@ -135,9 +135,9 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>170</y>
+      <y>190</y>
       <width>381</width>
-      <height>141</height>
+      <height>121</height>
      </rect>
     </property>
     <item>
@@ -175,11 +175,28 @@ p, li { white-space: pre-wrap; }
       <string>New Item</string>
      </property>
     </item>
-    <item>
-     <property name="text">
-      <string>New Item</string>
-     </property>
-    </item>
+   </widget>
+   <widget class="QLabel" name="labelRole">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>80</y>
+      <width>361</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Lato</family>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>ROLE</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
    </widget>
   </widget>
  </widget>

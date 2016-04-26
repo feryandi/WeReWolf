@@ -37,6 +37,11 @@ QJsonArray handler_server::getClients()
     return clients;
 }
 
+QString handler_server::getRole()
+{
+    return player_role;
+}
+
 void handler_server::statusConnected()
 {
     qDebug() << "connected...";
@@ -110,10 +115,10 @@ void handler_server::readMessage()
             method = json_object.value("method");
 
             if (method == "start"){
-                /* Send list clients message */
-                QJsonObject json_object_;
-                json_object_.insert("method", "client_address");
-                sendMessageJSON(json_object_);
+                /* Set user role */
+                player_role = json_object.value("role").toString();
+                emit on_start();
+
             } else if (method == "change_phase"){
 
             } else if (method == "game_over"){
