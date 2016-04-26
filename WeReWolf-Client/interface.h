@@ -18,6 +18,7 @@ class interface : public QObject
     signals:
 
     public slots:
+        void do_display_failure(QString description);
         void do_login();
 
     private:

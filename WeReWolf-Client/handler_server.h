@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QTcpSocket>
 #include <QHostAddress>
+#include <QNetworkInterface>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -20,6 +21,7 @@ class handler_server : public QObject
 
 
     signals:
+        void on_fail_or_error(QString);
         void on_login();
         void on_ready();
         void on_get_clients();

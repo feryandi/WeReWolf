@@ -3,6 +3,8 @@
 interface::interface(QObject *parent) : QObject(parent)
 {
     connect(&connection_server, SIGNAL(on_login()), this, SLOT(do_login()));
+    connect(&connection_server, SIGNAL(on_fail_or_error(QString)), this, SLOT(do_display_failure(QString)));
+
 
     /* Create user interface */
     w_login = new login;
@@ -10,6 +12,11 @@ interface::interface(QObject *parent) : QObject(parent)
 
     connect(&connection_server, SIGNAL(on_login()), w_login, SLOT(do_destroy()));
     w_login->show();
+}
+
+void interface::do_display_failure(QString description)
+{
+    qDebug() << description;
 }
 
 void interface ::do_login()

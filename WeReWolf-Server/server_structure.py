@@ -2,11 +2,13 @@ from socket import *
 import struct
 import thread
 import json
+import random
 
 from game import *
 
 class GameServer:
 	def __init__ (self):
+		random.seed()
 		self.players = [""] * 25 # maximum players online 
 		self.game = Game()
 		self.playerNum = 0
@@ -36,7 +38,7 @@ class GameServer:
 			if ( player != "" ):
 				player.getIPort().send(msg + "\r\n")
 
-	def isAllReady (self, rid):
+	def isAllReady (self):
 		b = True
 		for player in self.players:
 			if ( player != "" ):
@@ -45,7 +47,7 @@ class GameServer:
 
 		return b
 
-	def startGame (self, rid):
+	def startGame (self):
 		werewolf = self.playerNum / 3
 		villager = self.playerNum - werewolf
 
@@ -64,7 +66,7 @@ class GameServer:
 
 		for player in self.players:
 			if ( player != "" ):
-				player.getIPort().send(startGameToJSON(player.getRole, wfplayer))			
+				player.getIPort().send(self.startGameToJSON(player.getRole, wfplayer))			
 
 		return None
 
@@ -79,7 +81,7 @@ class GameServer:
 
 		msgobj = message()
 
-		this.role = role
+		self.role = role
 
 		if ( role == "werewolf" ):
 			for wf in wfplayer:
