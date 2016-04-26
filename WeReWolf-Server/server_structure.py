@@ -43,19 +43,50 @@ class GameServer:
 		return b
 
 	def startGame (self, rid):
+
+		werewolf = self.playerNum / 3
+		villager = self.playerNum - werewolf
+
+		wfplayer = []
+		i = 0
+
 		for player in self.players:
 			if ( player != "" ):
-				# player.getIPort().send(msg + "\r\n")
-				return None
+				rnd = random.randint(0, 1)
+				if ( (werewolf > 0) and ( rnd == 1 ) ):
+					player.setRole("villager")
+				else:
+					player.setRole("werewolf")
+					wfplayer.append(i)
+				i += 1
 
 		return None
+
+	def startGameToJSON (self, role):
+		class message(object):
+			def __init__(self):
+				self.method = "start"
+				self.time = "night"
+				self.role = ""
+				self.friend = []
+				self.description = "game is started"
+
+		msgobj = message()
+
+		this.role = role
+
+		if ( role == "werewolf" ):
+			
+
+		msg = json.dumps(msgobj.__dict__)
+		return msg
 
 	def newPlayer (self, name, iport, udip, udport):
 		i = 0
 		for x in self.players:
 			if ( x == "" ):
 				self.players[i] = Player(i, iport, name, udip, udport)
-				playerNum += 1
+				self.playerNum += 1
 				return i
 			i += 1
 		return None
@@ -168,32 +199,18 @@ class MessageServer:
 		for client in GameServer.getPlayerList():
 			if ( client != "" ):
 				if (client.isAlive()):
-					msgobj.data.append({"player_id": client.getID(), 
+					msgobj.clients.append({"player_id": client.getID(), 
 										"is_alive": client.isAlive(), 
 										"address": client.getUdIP(), 
 										"port": client.getUdPort(), 
 										"username": client.getName()})
 				else:					
-					msgobj.data.append({"player_id": client.getID(), 
+					msgobj.clients.append({"player_id": client.getID(), 
 										"is_alive": client.isAlive(), 
 										"address": client.getUdIP(), 
 										"port": client.getUdPort(), 
 										"username": client.getName(), 
 										"role": client.getRole()})
-
-		msg = json.dumps(msgobj.__dict__)
-		return msg
-
-	def startGameToJSON (self, GameServer):
-		class message(object):
-			def __init__(self):
-				self.method = "start"
-				self.time = "night"
-				self.role = ""
-				self.friend = []
-				self.description = "game is started"
-
-		msgobj = message()
 
 		msg = json.dumps(msgobj.__dict__)
 		return msg
