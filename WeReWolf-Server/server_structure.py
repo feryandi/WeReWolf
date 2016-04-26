@@ -9,6 +9,7 @@ class GameServer:
 	def __init__ (self):
 		self.players = [""] * 25 # maximum players online 
 		self.game = Game()
+		self.playerNum = 0
 
 	def getGame(self):
 		return self.game
@@ -32,17 +33,47 @@ class GameServer:
 			if ( player != "" ):
 				player.getIPort().send(msg + "\r\n")
 
-	def newPlayer (self, name, iport):
+	def isAllReady (self, rid):
+		b = True
+		for player in self.players:
+			if ( player != "" ):
+				if ( player.getReadiness() == False ):
+					b = False
+
+		return b
+
+	def startGame (self, rid):
+		for player in self.players:
+			if ( player != "" ):
+				# player.getIPort().send(msg + "\r\n")
+
+	def newPlayer (self, name, iport, udip, udport):
 		i = 0
 		for x in self.players:
 			if ( x == "" ):
-				self.players[i] = Player(i, iport, name)
+				self.players[i] = Player(i, iport, name, udip, udport)
+				playerNum += 1
 				return i
 			i += 1
 		return None
 
 	def delPlayer (self, pid):
 		self.players[pid] = ""
+		a = 0
+		for i in range(pid, playerNum + 1): 
+			if (self.players[i] != ""):
+				(self.players[i]).setID(a)
+				a += 1
+
+	def delPlayerByID (self, pid):
+		rid = -1
+		i = 0
+		for player in self.players:
+			if ( player != "" ):
+				if ( player.getID() == pid ):
+					rid = i
+			i += 1
+		delPlayer(rid)
 
 
 class MessageServer:
@@ -80,7 +111,7 @@ class MessageServer:
 				if GameServer.getPlayerByUsername(msg['username']) == -1:
 					if not ((GameServer.getGame()).isGameStarted()):
 						# Register player ke Server
-						self.clientid = GameServer.newPlayer(msg['username'], clientsocket)
+						self.clientid = GameServer.newPlayer(msg['username'], clientsocket, msg['udp_address'], msg['udp_port'])
 						# Katakan bahwa login berhasil
 						self.sendResponse(clientsocket, json.dumps({"status":"ok", "player_id":self.clientid}))
 						# Berikan list Room yang ada
@@ -90,23 +121,76 @@ class MessageServer:
 				else:
 					self.sendResponse(clientsocket, json.dumps({"status":"fail", "description":"user exist"}))
 			else:
-				self.sendResponse(clientsocket, json.dumps({"status":"fail", "description":"wrong request"}))
+				self.sendResponse(clientsocket, json.dumps({"status":"error", "description":"wrong request"}))
+
+		elif msg['method'] == 'leave':
+			GameServer.delPlayer(self.clientid)
+			self.sendResponse(clientsocket, json.dumps({"status":"ok"}))
+
+		elif msg['method'] == 'ready':
+			(GameServer.getPlayerByPID(self.clientid)).setReadiness(True)
+			self.sendResponse(clientsocket, json.dumps({"status":"ok", "description":"waiting for other player to start"}))
+
+		elif msg['method'] == 'client_address':
+			self.sendResponse(clientsocket, self.clientsToJSON(GameServer))
+
+		elif msg['method'] == 'vote_result_werewolf':
+			if (msg['vote_status'] == 1):
+				GameServer.delPlayerByID(msg['player_killed'])
+				(GameServer.getGame()).changeTime()
+				GameServer.broadcast({"method":"change_phase", 
+									  "time":"day", 
+									  "days": (GameServer.getGame()).getDay(), 
+									  "description":"Werewolf voted, civilian killed"})
+
+		elif msg['method'] == 'vote_result_civilian':
+			if (msg['vote_status'] == 1):
+				GameServer.delPlayerByID(msg['player_killed'])
+				(GameServer.getGame()).changeTime()
+				GameServer.broadcast({"method":"change_phase", 
+									  "time":"night", 
+									  "days": (GameServer.getGame()).getDay(), 
+									  "description":"Civilian voted, someone killed"})
 
 
-	def objectToJSON (self, request, GameServer):
+	def clientsToJSON (self, GameServer):
 		class message(object):
 			def __init__(self):
-				self.type = "response"
-				self.object = "undefined"
-				self.data = []
+				self.status = "ok"
+				self.description = "list of clients retrieved"
+				self.clients = []
 
 		msgobj = message()
 
-		#if (request == "rooms"):
-		#	msgobj.object = "rooms"
-		#	for room in GameServer.getRoomList():
-		#		if ( room != "" ):
-		#			msgobj.data.append({"id": room[0].getID(), "name":room[0].getName()})
+		for client in GameServer.getPlayerList():
+			if ( client != "" ):
+				if (client.isAlive()):
+					msgobj.data.append({"player_id": client.getID(), 
+										"is_alive": client.isAlive(), 
+										"address": client.getUdIP(), 
+										"port": client.getUdPort(), 
+										"username": client.getName()})
+				else:					
+					msgobj.data.append({"player_id": client.getID(), 
+										"is_alive": client.isAlive(), 
+										"address": client.getUdIP(), 
+										"port": client.getUdPort(), 
+										"username": client.getName(), 
+										"role": client.getRole()})
+
+		msg = json.dumps(msgobj.__dict__)
+		return msg
+
+	def startGameToJSON (self, GameServer):
+		class message(object):
+			def __init__(self):
+				self.method = "start"
+				self.time = "night"
+				self.role = ""
+				self.friend = []
+				self.description = "game is started"
+
+		msgobj = message()
 
 		msg = json.dumps(msgobj.__dict__)
 		return msg

@@ -22,5 +22,8 @@ class Game:
 		self.time %= 2
 		self.turn += 1
 
+	def getDay (self):
+		return (self.turn / 2)
+
 	def __del__ (self):
 		print "Game from Room ( " + str(self.room) + " ) stopped"

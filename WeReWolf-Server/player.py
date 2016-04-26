@@ -1,11 +1,17 @@
 class Player:
-	def __init__ (self, pid, iport, name):
+	def __init__ (self, pid, iport, name, udip, udport):
 		self.id = pid
 		self.iport = iport
 		self.name = name
 		self.role = 'undefined'
-		self.alive = True;
-		self.ready = False;
+
+		self.alive = 1
+		self.ready = False
+
+		self.udport = udport
+		self.udip = udip
+
+		self.sKPU = -1
 
 	def isAlive (self):
 		return self.alive
@@ -19,8 +25,20 @@ class Player:
 	def setID (self, pid):
 		self.id = pid
 
+	def setRole(self, role):
+		self.role = role
+
+	def getRole(self):
+		return self.role
+
 	def getIPort (self):
 		return self.iport
+
+	def getUdPort (self):
+		return self.udport
+
+	def getUdIP (self):
+		return self.udip
 
 	def getName (self):
 		return self.name
