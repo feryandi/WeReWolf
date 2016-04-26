@@ -14,6 +14,9 @@ class GameServer:
 	def getGame(self):
 		return self.game
 
+	def getTotalPlayer(self):
+		return self.playerNum
+
 	def getPlayerList (self):
 		return self.players
 
@@ -43,7 +46,6 @@ class GameServer:
 		return b
 
 	def startGame (self, rid):
-
 		werewolf = self.playerNum / 3
 		villager = self.playerNum - werewolf
 
@@ -60,9 +62,13 @@ class GameServer:
 					wfplayer.append(i)
 				i += 1
 
+		for player in self.players:
+			if ( player != "" ):
+				player.getIPort().send(startGameToJSON(player.getRole, wfplayer))			
+
 		return None
 
-	def startGameToJSON (self, role):
+	def startGameToJSON (self, role, wfplayer):
 		class message(object):
 			def __init__(self):
 				self.method = "start"
@@ -76,7 +82,8 @@ class GameServer:
 		this.role = role
 
 		if ( role == "werewolf" ):
-			return None
+			for wf in wfplayer:
+				msgobj.friend.append((self.players[wf]).getName())
 
 		msg = json.dumps(msgobj.__dict__)
 		return msg
@@ -94,7 +101,7 @@ class GameServer:
 	def delPlayer (self, pid):
 		self.players[pid] = ""
 		a = 0
-		for i in range(pid, playerNum + 1): 
+		for i in range(pid, (self.playerNum + 1)): 
 			if (self.players[i] != ""):
 				(self.players[i]).setID(a)
 				a += 1
@@ -163,7 +170,10 @@ class MessageServer:
 
 		elif msg['method'] == 'ready':
 			(GameServer.getPlayerByPID(self.clientid)).setReadiness(True)
-			self.sendResponse(clientsocket, json.dumps({"status":"ok", "description":"waiting for other player to start"}))
+			if ( (GameServer.isAllReady()) and (GameServer.getTotalPlayer() >= 1) ):
+				GameServer.startGame()
+			else:
+				self.sendResponse(clientsocket, json.dumps({"status":"ok", "description":"waiting for other player to start"}))
 
 		elif msg['method'] == 'client_address':
 			self.sendResponse(clientsocket, self.clientsToJSON(GameServer))
