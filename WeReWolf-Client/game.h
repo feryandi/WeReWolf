@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "handler_server.h"
+#include "handler_client.h"
 
 namespace Ui {
 class game;

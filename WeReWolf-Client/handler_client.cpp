@@ -18,7 +18,7 @@ void handler_client::doListen(quint16 client_port)
 
 void handler_client::readMessage()
 {
-//    while (socket->hasPendingDatagrams()) {
+    while (socket->hasPendingDatagrams()) {
         QByteArray message;
         message.resize(socket->pendingDatagramSize());
 
@@ -28,8 +28,16 @@ void handler_client::readMessage()
 
         qDebug() << "reading...";
 
-        QList<QByteArray> message_list= message.split('\n');
+        QList<QByteArray> message_list = message.split('\n');
         qDebug() << message_list;
 
-//    }
+    }
+}
+
+void handler_client::sendMessage(QString recv_address, QString recv_port, QJsonObject message)
+{
+    QJsonDocument json_document;
+    json_document.setObject(message);
+    qDebug() << json_document;
+    socket->writeDatagram((json_document.toJson(QJsonDocument::Compact) + "\r\n"), QHostAddress(recv_address), recv_port.toUShort());
 }

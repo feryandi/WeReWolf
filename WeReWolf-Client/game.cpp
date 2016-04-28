@@ -57,6 +57,11 @@ void game::on_buttonVote_clicked()
         QJsonObject json_object;
         json_object.insert("method", "ready");
         connection_server.sendMessageJSON(json_object);
+    } else {
+        QJsonObject json_object;
+        json_object.insert("method", "WASU!");
+        connection_client.sendMessage("10.5.21.53", "9999", json_object);
+
     }
 
 }
