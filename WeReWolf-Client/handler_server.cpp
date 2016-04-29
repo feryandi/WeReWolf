@@ -42,6 +42,11 @@ QString handler_server::getRole()
     return player_role;
 }
 
+int handler_server::getClientId()
+{
+    return player_id;
+}
+
 void handler_server::statusConnected()
 {
     qDebug() << "connected...";
@@ -120,6 +125,7 @@ void handler_server::readMessage()
                 emit on_start();
 
             } else if (method == "change_phase"){
+                emit on_change_phase(json_object);
 
             } else if (method == "game_over"){
 

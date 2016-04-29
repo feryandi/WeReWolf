@@ -19,6 +19,7 @@ class handler_server : public QObject
         QString getLocalAddress();
         QJsonArray getClients();
         QString getRole();
+        int getPlayerId();
 
     signals:
         void on_fail_or_error(QString);
@@ -27,6 +28,7 @@ class handler_server : public QObject
         void on_get_clients();
 
         void on_start();
+        void on_change_phase(QJsonObject);
 
     public slots:
         void statusConnected();

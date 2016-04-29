@@ -42,12 +42,28 @@ void game::do_populate_players()
     ui->listPlayer->clear();
     QStringList list_player;
     QJsonObject json_object;
-    for (int i=0; i<connection_server.getClients().size(); i++){
+    int size = connection_server.getClients().size();
+    for (int i=0; i<size; i++){
         json_object = connection_server.getClients().at(i).toObject();
         list_player += json_object.value("username").toString();
     }
+
+    for (int i=0; i<size; i++){
+        json_object = connection_server.getClients().at(i).toObject();
+        if ((json_object.value("player_id").toInt() == size) || (json_object.value("player_id").toInt() == size - 1))
+        {
+            connection_client.prepare_proposal();
+        }
+    }
     ui->listPlayer->addItems(list_player);
     ui->listPlayer->show();
+}
+
+void game::do_set_rule(QJsonObject message)
+{
+    ui->labelTime->setText(message.value("time").toString() + " - " + message.value("day").toString());
+    ui->textNarration->setText(message.value("description").toString());
+
 }
 
 void game::on_buttonVote_clicked()
@@ -60,8 +76,7 @@ void game::on_buttonVote_clicked()
     } else {
         QJsonObject json_object;
         json_object.insert("method", "WASU!");
-        connection_client.sendMessage("10.5.21.53", "9999", json_object);
-
+        connection_client.sendMessage("10.5.22.248", "9999", json_object);
     }
 
 }

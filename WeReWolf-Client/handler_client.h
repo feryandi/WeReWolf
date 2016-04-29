@@ -7,6 +7,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
+#include "handler_server.h"
 
 class handler_client : public QObject
 {
@@ -20,6 +21,7 @@ class handler_client : public QObject
     public slots:
         void readMessage();
         void sendMessage(QString recv_address, QString recv_port, QJsonObject message);
+        void prepare_propose();
 
     private:
         QUdpSocket *socket;

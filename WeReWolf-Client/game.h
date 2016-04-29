@@ -21,6 +21,7 @@ private slots:
     void do_start();
     void do_wait_until_start();
     void do_populate_players();
+    void do_set_rule(QJsonObject message);
     void on_buttonVote_clicked();
 
 private:
