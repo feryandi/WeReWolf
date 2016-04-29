@@ -6,17 +6,17 @@ handler_client::handler_client(QObject *parent) : QObject(parent)
 {
 }
 
-int handler_server::getCounter()
+int handler_client::getCounter()
 {
     return local_counter;
 }
 
-void handler_server::setCounter(int c)
+void handler_client::setCounter(int c)
 {
     local_counter = c;
 }
 
-void handler_server::resetCounter()
+void handler_client::resetCounter()
 {
     local_counter = 0;
 }
