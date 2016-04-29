@@ -22,8 +22,8 @@ void interface::do_display_failure(QString description)
 void interface ::do_login()
 {
     connect(&connection_server, SIGNAL(on_ready()), w_game, SLOT(do_wait_until_start()));
-    connect(&connection_server, SIGNAL(on_start()), w_game, SLOT(do_start()));
     connect(&connection_server, SIGNAL(on_get_clients()), w_game, SLOT(do_populate_players()));
+    connect(&connection_server, SIGNAL(on_start()), w_game, SLOT(do_start()));
     connect(&connection_server, SIGNAL(on_change_phase(QJsonObject)), w_game, SLOT(do_set_rule(QJsonObject)));
     w_game->show();
 }

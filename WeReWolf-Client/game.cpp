@@ -48,13 +48,14 @@ void game::do_populate_players()
         list_player += json_object.value("username").toString();
     }
 
-    for (int i=0; i<size; i++){
-        json_object = connection_server.getClients().at(i).toObject();
-        if ((json_object.value("player_id").toInt() == size) || (json_object.value("player_id").toInt() == size - 1))
-        {
-            connection_client.prepare_proposal();
-        }
+    qDebug() << "Total client: " << size;
+    int clientID = static_cast<int>(connection_server.getClientId());
+    if (((clientID + 1) == size) || ((clientID + 1) == (size - 1)))
+    {
+        qDebug() << "Ngirim Proposal";
+        connection_client.prepare_proposal();
     }
+
     ui->listPlayer->addItems(list_player);
     ui->listPlayer->show();
 }
@@ -64,6 +65,7 @@ void game::do_set_rule(QJsonObject message)
     ui->labelTime->setText(message.value("time").toString() + " - " + message.value("day").toString());
     ui->textNarration->setText(message.value("description").toString());
 
+    //int size = connection_server.getClients().size();
 }
 
 void game::on_buttonVote_clicked()

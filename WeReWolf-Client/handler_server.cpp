@@ -123,6 +123,7 @@ void handler_server::readMessage()
                 /* Set user role */
                 player_role = json_object.value("role").toString();
                 emit on_start();
+                emit on_change_phase(json_object);
 
             } else if (method == "change_phase"){
                 emit on_change_phase(json_object);
