@@ -6,6 +6,21 @@ handler_client::handler_client(QObject *parent) : QObject(parent)
 {
 }
 
+int handler_server::getCounter()
+{
+    return local_counter;
+}
+
+void handler_server::setCounter(int c)
+{
+    local_counter = c;
+}
+
+void handler_server::resetCounter()
+{
+    local_counter = 0;
+}
+
 void handler_client::doListen(quint16 client_port)
 {
     socket = new QUdpSocket(this);
@@ -62,7 +77,7 @@ void handler_client::prepare_proposal()
             QJsonArray json_array;
             qDebug() << "Your player id: " << playerid;
 
-            json_array.insert(0,connection_server.getCounter());
+            json_array.insert(0,connection_client.getCounter());
             json_array.insert(1,playerid);
             message.insert("method", "prepare_proposal");
             message.insert("proposal_id", json_array);

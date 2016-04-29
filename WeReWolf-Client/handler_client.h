@@ -15,6 +15,9 @@ class handler_client : public QObject
     public:
         explicit handler_client(QObject *parent = 0);
         void doListen(quint16 client_port);
+        int getCounter();
+        void setCounter(int c);
+        void resetCounter();
 
     signals:
         void on_prepare_proposal(QJsonObject);
@@ -26,6 +29,7 @@ class handler_client : public QObject
 
     private:
         QUdpSocket *socket;
+        int local_counter;
 };
 
 /* Universal client connection handler */

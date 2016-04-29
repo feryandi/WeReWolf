@@ -20,9 +20,6 @@ class handler_server : public QObject
         QJsonArray getClients();
         QString getRole();
         int getClientId();
-        int getCounter();
-        void setCounter(int c);
-        void resetCounter();
 
     signals:
         void on_fail_or_error(QString);
@@ -45,7 +42,6 @@ class handler_server : public QObject
         QJsonArray clients;
         QString player_role;
         int player_id;
-        int local_counter;
 };
 
 /* Universal server connection handler */
