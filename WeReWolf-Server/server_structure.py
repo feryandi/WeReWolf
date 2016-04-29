@@ -98,7 +98,7 @@ class GameServer:
 				self.playerNum += 1
 				return i
 			i += 1
-		return None
+		return i
 
 	def delPlayer (self, pid):
 		self.players[pid] = ""
@@ -173,7 +173,7 @@ class MessageServer:
 		elif msg['method'] == 'ready':
 			(GameServer.getPlayerByPID(self.clientid)).setReadiness(True)
 			self.sendResponse(clientsocket, json.dumps({"status":"ok", "description":"waiting for other player to start"}))
-			if ( (GameServer.isAllReady()) and (GameServer.getTotalPlayer() >= 1) ):
+			if ( (GameServer.isAllReady()) and (GameServer.getTotalPlayer() >= 3) ):
 				GameServer.startGame()
 
 		elif msg['method'] == 'client_address':

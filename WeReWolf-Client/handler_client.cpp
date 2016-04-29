@@ -59,6 +59,7 @@ void handler_client::prepare_proposal()
             QJsonValue proposalid, playerid;
             proposalid = i;
             playerid = connection_server.getClientId();
+            qDebug() << "Your player id: " << playerid;
             json_array.insert(0,proposalid);
             json_array.insert(1,playerid);
             message.insert("method", "prepare_proposal");
