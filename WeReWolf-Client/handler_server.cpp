@@ -47,7 +47,6 @@ int handler_server::getClientId()
     return player_id;
 }
 
-
 void handler_server::statusConnected()
 {
     qDebug() << "connected...";
