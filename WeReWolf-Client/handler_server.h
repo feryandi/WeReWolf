@@ -19,7 +19,7 @@ class handler_server : public QObject
         QString getLocalAddress();
         QJsonArray getClients();
         QString getRole();
-        int getPlayerId();
+        int getClientId();
 
     signals:
         void on_fail_or_error(QString);

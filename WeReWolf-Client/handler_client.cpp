@@ -49,12 +49,21 @@ void handler_client::prepare_proposal()
     {
         if (i != connection_server.getClientId())
         {
-            json_object = json_object = connection_server.getClients().at(i).toObject();
+            QJsonObject json_object = connection_server.getClients().at(i).toObject();
             QString address = json_object.value("address").toString();
             QString port = json_object.value("port").toString();
-            QJsonObject messages;
-            //ini isi jsonobjectnya
-            sendMessage(address,port,messages);
+
+            /* send message */
+            QJsonObject message;
+            QJsonArray json_array;
+            QJsonValue proposalid, playerid;
+            proposalid = i;
+            playerid = connection_server.getClientId();
+            json_array.insert(0,proposalid);
+            json_array.insert(1,playerid);
+            message.insert("method", "prepare_proposal");
+            message.insert("proposal_id", json_array);
+            sendMessage(address,port,message);
         }
     }
 }
