@@ -17,6 +17,7 @@ class handler_client : public QObject
         void doListen(quint16 client_port);
 
     signals:
+        void on_prepare_proposal(QJsonObject);
 
     public slots:
         void readMessage();

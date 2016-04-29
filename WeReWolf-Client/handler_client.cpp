@@ -38,7 +38,7 @@ void handler_client::sendMessage(QString recv_address, QString recv_port, QJsonO
 {
     QJsonDocument json_document;
     json_document.setObject(message);
-    qDebug() << json_document;
+    qDebug() << "SEND UDP DATAGRAM: " << json_document;
     socket->writeDatagram((json_document.toJson(QJsonDocument::Compact) + "\r\n"), QHostAddress(recv_address), recv_port.toUShort());
 }
 
@@ -47,23 +47,26 @@ void handler_client::prepare_proposal()
     int size = connection_server.getClients().size();
     for (int i = 0; i < size; i++)
     {
-        if (i != connection_server.getClientId())
+        QJsonValue playerid;
+        playerid = connection_server.getClientId();
+
+        if (i != static_cast<int>(connection_server.getClientId()))
         {
             QJsonObject json_object = connection_server.getClients().at(i).toObject();
+            qDebug() << json_object;
             QString address = json_object.value("address").toString();
             QString port = json_object.value("port").toString();
 
             /* send message */
             QJsonObject message;
             QJsonArray json_array;
-            QJsonValue proposalid, playerid;
-            proposalid = i;
-            playerid = connection_server.getClientId();
             qDebug() << "Your player id: " << playerid;
-            json_array.insert(0,proposalid);
+
+            json_array.insert(0,connection_server.getCounter());
             json_array.insert(1,playerid);
             message.insert("method", "prepare_proposal");
             message.insert("proposal_id", json_array);
+
             sendMessage(address,port,message);
         }
     }

@@ -68,6 +68,15 @@ void game::do_set_rule(QJsonObject message)
     //int size = connection_server.getClients().size();
 }
 
+void game::do_proposal_prepare(QJsonObject message)
+{
+    int c = (message.value("proposal_id").toArray().at(0)).toInt();
+    if (connection_server.getCounter() < c) {
+        connection_server.setCounter(c);
+        qDebug() << "Accepting proposal from " << message.value("proposal_id").toArray().at(1) << " with value " << c;
+    }
+}
+
 void game::on_buttonVote_clicked()
 {
     if (ui->buttonVote->text() == "Ready!"){

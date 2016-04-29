@@ -47,6 +47,21 @@ int handler_server::getClientId()
     return player_id;
 }
 
+int handler_server::getCounter()
+{
+    return local_counter;
+}
+
+void handler_server::setCounter(int c)
+{
+    local_counter = c;
+}
+
+void handler_server::resetCounter()
+{
+    local_counter = 0;
+}
+
 void handler_server::statusConnected()
 {
     qDebug() << "connected...";
