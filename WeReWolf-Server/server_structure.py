@@ -123,11 +123,11 @@ class GameServer:
 		return msg
 
 	def isEndGame (self):
-		villager = getTotalAlivePlayer() - getTotalAliveWerewolf()
-		werewolf = getTotalAliveWerewolf()
+		villager = self.getTotalAlivePlayer() - self.getTotalAliveWerewolf()
+		werewolf = self.getTotalAliveWerewolf()
 		winner = -1
 
-		if ( werewolf == vilagger ):
+		if ( werewolf == villager ):
 			winner = 0
 		elif ( werewolf == 0 ):
 			winner = 1
@@ -141,7 +141,7 @@ class GameServer:
 			else:
 				winning = 'villager'
 
-			GameServer.broadcast({"method":"game_over", 
+			self.broadcast({"method":"game_over", 
 								  "winner":winning,
 								  "description":"Game Ended"})
 

@@ -102,7 +102,7 @@ void game::do_populate_players()
 
 void game::do_set_rule(QJsonObject message)
 {
-    ui->labelTime->setText(message.value("time").toString() + " - " + message.value("day").toString());
+    ui->labelTime->setText(message.value("time").toString() + " - day " + message.value("days").toString());
     ui->textNarration->setText(message.value("description").toString());
 
     connection_server.setCurrentTime(message.value("time").toString());
@@ -204,7 +204,7 @@ void game::on_buttonVote_clicked()
         QJsonObject json_object;
         json_object.insert("method", "ready");
         connection_server.sendMessageJSON(json_object);
-    } else {
+    } else if (ui->listPlayer->selectedItems().count() == 1) {
         QString username = ui->listPlayer->currentItem()->text();
         QString sender_ip;
         quint16 sender_port;
