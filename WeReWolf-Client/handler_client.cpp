@@ -6,9 +6,19 @@ handler_client::handler_client(QObject *parent) : QObject(parent), last_KPU(-1)
 {
 }
 
-int handler_client::getCounter()
+int handler_client::getCounterLocal()
 {
     return counter_local;
+}
+
+int handler_client::getCounterPrepare()
+{
+    return counter_prepare;
+}
+
+int handler_client::getCounterAccept()
+{
+    return counter_accept;
 }
 
 int handler_client::getLastKPU()
@@ -59,9 +69,13 @@ void handler_client::readMessage()
         QJsonDocument json_document;
         QJsonObject json_object;
         QJsonValue method, status, description;
-        for (int i=0; i<message_list.size(); i++){
+        for (int i=0; i<message_list.size()-1; i++){
             json_document = QJsonDocument::fromJson(message_list.at(i));
             json_object = json_document.object();
+
+            //qDebug() << "AAAAA" << json_object << "BBBB";
+            //qDebug() << "CCCCC" << last_sent_method << "DDDD";
+
 
             if (json_object.contains("status")){
                 /* Response Proposer->Acceptor */
@@ -89,7 +103,6 @@ void handler_client::readMessage()
             } else if (json_object.contains("method")){
                 /* Request Acceptor->Proposer */
                 method = json_object.value("method");
-                qDebug() << "Masuk ga yaa";
                 // Cek dia nerima method apa
                 if (method == "prepare_proposal"){
                     emit on_accept_prepare_proposal(json_object,sender_ip,sender_port);
@@ -108,12 +121,15 @@ void handler_client::sendMessage(QString recv_address, QString recv_port, QJsonO
     json_document.setObject(message);
     qDebug() << "SEND UDP DATAGRAM: " << json_document;
     socket->writeDatagram((json_document.toJson(QJsonDocument::Compact) + "\r\n"), QHostAddress(recv_address), recv_port.toUShort());
+    if (message.value("method").toString() != ""){
+        last_sent_method = message.value("method").toString();
+    }
 }
 
 void handler_client::prepare_proposal()
 {
     int size = connection_server.getClients().size();
-    int newcounter = connection_client.getCounter() + 1;
+    int newcounter = connection_client.getCounterLocal() + 1;
     counter_prepare = 0;
     for (int i = 0; i < size; i++)
     {
@@ -149,7 +165,7 @@ void handler_client::prepare_proposal()
 void handler_client::accept_proposal()
 {
     int size = connection_server.getClients().size();
-    int newcounter = connection_client.getCounter() + 1;
+    int counter = connection_client.getCounterLocal();
     counter_prepare = 0;
     for (int i = 0; i < size; i++)
     {
@@ -167,12 +183,12 @@ void handler_client::accept_proposal()
             QJsonObject message;
             QJsonArray json_array;
 
-            json_array.insert(0,newcounter);
+            json_array.insert(0,counter);
             json_array.insert(1,playerid);
-            qDebug() << "ini accept";
-            qDebug() << "Proposal-id: " << newcounter;
+            //qDebug() << "ini accept";
+            qDebug() << "Proposal-id: " << counter;
             qDebug() << "Your player id: " << playerid;
-            connection_client.setCounter(newcounter);
+            connection_client.setCounter(counter);
             message.insert("method", "accept_proposal");
             message.insert("proposal_id", json_array);
             message.insert("kpu_id", playerid);

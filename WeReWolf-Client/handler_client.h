@@ -15,7 +15,9 @@ class handler_client : public QObject
     public:
         explicit handler_client(QObject *parent = 0);
         void doListen(quint16 client_port);
-        int getCounter();
+        int getCounterLocal();
+        int getCounterPrepare();
+        int getCounterAccept();
         int getLastKPU();
         void setCounter(int c);
         void setLastKPU(int c);

@@ -7,6 +7,7 @@ class Game:
 		self.turn = 0
 		self.winner = -1
 		self.isStart = False
+		self.kpu = -1
 
 	def isGameStarted (self):
 		return self.isStart
@@ -24,6 +25,12 @@ class Game:
 
 	def getDay (self):
 		return (self.turn / 2)
+
+	def setKPU (self, kpu_id):
+		self.kpu = kpu_id
+
+	def getKPU (self):
+		return self.kpu
 
 	def __del__ (self):
 		print "Game from Room ( " + str(self.room) + " ) stopped"

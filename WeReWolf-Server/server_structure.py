@@ -32,7 +32,7 @@ class GameServer:
 					return player.getID
 		return -1
 
-	def broadcast (self, rid, message):
+	def broadcast (self, message):
 		msg = json.dumps(message,separators=(',',':'))
 		for player in self.players:
 			if ( player != "" ):
@@ -196,6 +196,10 @@ class MessageServer:
 									  "time":"night", 
 									  "days": (GameServer.getGame()).getDay(), 
 									  "description":"Civilian voted, someone killed"})
+
+		elif msg['method'] == 'accepted_proposal':
+			(GameServer.getGame()).setKPU(msg['kpu_id'])
+			self.sendResponse(clientsocket, json.dumps({"status":"ok", "description":"KPU is selected"}))
 
 
 	def clientsToJSON (self, GameServer):
