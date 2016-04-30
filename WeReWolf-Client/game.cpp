@@ -74,7 +74,11 @@ void game::do_proposal_prepare(QJsonObject message, QHostAddress sender_ip, quin
     int newKPU = message.value("proposal_id").toArray().at(1).toInt();
     int lastKPU = connection_client.getLastKPU();
     QJsonObject json_object;
-
+    qDebug() << "DO_PROPOSAL_PREPARE";
+    qDebug() << "c = " << c;
+    qDebug() << "recentCounter = " << recentCounter;
+    qDebug() << "lastKPU = " << lastKPU;
+    qDebug() << "newKPU = " << newKPU;
     if ((recentCounter < c) || ((recentCounter == c) && (lastKPU  < newKPU))) {
         connection_client.setCounter(c);
 
@@ -92,7 +96,7 @@ void game::do_proposal_prepare(QJsonObject message, QHostAddress sender_ip, quin
         int size = connection_server.getClients().size();
         int clientID = static_cast<int>(connection_server.getClientId());
         if (((clientID + 1) == size) || ((clientID + 1) == (size - 1))) {
-            //QTimer::singleShot(1000, &connection_client, SLOT(prepare_proposal()));
+            QTimer::singleShot(1000, &connection_client, SLOT(accept_proposal()));
         }
 
         connection_client.setLastKPU(newKPU);
@@ -113,6 +117,12 @@ void game::do_proposal_accept(QJsonObject message, QHostAddress sender_ip, quint
     int lastKPU = connection_client.getLastKPU();
     int kpuId = message.value("kpu_id").toInt();
     QJsonObject json_object;
+
+    qDebug() << "DO_PROPOSAL_ACCEPT";
+    qDebug() << "c = " << c;
+    qDebug() << "recentCounter = " << recentCounter;
+    qDebug() << "lastKPU = " << lastKPU;
+    qDebug() << "kpuId = " << kpuId;
 
     if ((recentCounter == c) && ((playerId == lastKPU) && (kpuId  == lastKPU))) {
         json_object.insert("status","ok");

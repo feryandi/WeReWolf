@@ -77,6 +77,13 @@ void handler_client::readMessage()
                     if (counter_prepare == connection_server.getClients().size()-1){
                         accept_proposal();
                     }
+                } else if (last_sent_method == "accept_proposal" && status == "ok"){
+                    QJsonObject json_object_;
+                    json_object_.insert("method", "accepted_proposal");
+                    json_object_.insert("kpu_id", last_KPU);
+                    json_object_.insert("Description", "Kpu is selected");
+
+                    connection_server.sendMessageJSON(json_object_);
                 }
 
             } else if (json_object.contains("method")){
@@ -162,6 +169,7 @@ void handler_client::accept_proposal()
 
             json_array.insert(0,newcounter);
             json_array.insert(1,playerid);
+            qDebug() << "ini accept";
             qDebug() << "Proposal-id: " << newcounter;
             qDebug() << "Your player id: " << playerid;
             connection_client.setCounter(newcounter);
