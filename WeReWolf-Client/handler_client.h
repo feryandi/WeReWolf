@@ -20,7 +20,8 @@ class handler_client : public QObject
         void resetCounter();
 
     signals:
-        void on_prepare_proposal(QJsonObject);
+        void on_fail_or_error(QString);
+        void on_accept_prepare_proposal(QJsonObject);
 
     public slots:
         void readMessage();
@@ -29,6 +30,7 @@ class handler_client : public QObject
 
     private:
         QUdpSocket *socket;
+        QString last_sent_method;
         int local_counter;
 };
 

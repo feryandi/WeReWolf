@@ -46,6 +46,41 @@ void handler_client::readMessage()
         QList<QByteArray> message_list = message.split('\n');
         qDebug() << message_list;
 
+        QJsonDocument json_document;
+        QJsonObject json_object;
+        QJsonValue method, status, description;
+        for (int i=0; i<message_list.size(); i++){
+            json_document = QJsonDocument::fromJson(message_list.at(i));
+            json_object = json_document.object();
+
+            if (json_object.contains("status")){
+                /* Response Proposer->Acceptor */
+                status = json_object.value("status");
+
+                if (status == "fail" || status == "error"){
+                    description = json_object.value("description");
+                    emit on_fail_or_error(description.toString());
+
+                /*} else if (last_sent_method == "prepare_proposal" && status == "ok"){
+
+                    emit on_login();
+*/
+                }
+
+            } else if (json_object.contains("method")){
+                /* Request Acceptor->Proposer */
+                method = json_object.value("method");
+                qDebug() << "Masuk ga yaa";
+                // Cek dia nerima method apa
+                if (method == "prepare_proposal"){
+                    emit on_accept_prepare_proposal(json_object);
+
+                } else if (method == "accept_proposal"){
+
+                }
+            }
+
+        }
     }
 }
 
@@ -65,7 +100,7 @@ void handler_client::prepare_proposal()
         QJsonValue playerid;
         playerid = connection_server.getClientId();
 
-        if (i != static_cast<int>(connection_server.getClientId()))
+        if ((i < size-2))
         {
             QJsonObject json_object = connection_server.getClients().at(i).toObject();
             qDebug() << json_object;
