@@ -26,6 +26,7 @@ private slots:
     void on_buttonVote_clicked();
     void do_proposal_prepare(QJsonObject message, QHostAddress sender_ip, quint16 sender_port);
     void do_proposal_accept(QJsonObject message, QHostAddress sender_ip, quint16 sender_port);
+    void do_delete();
 
 private:
     Ui::game *ui;

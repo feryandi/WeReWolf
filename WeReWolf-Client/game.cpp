@@ -230,3 +230,7 @@ void game::on_buttonVote_clicked()
         }
     }
 }
+
+void game::do_delete() {
+    delete this;
+}

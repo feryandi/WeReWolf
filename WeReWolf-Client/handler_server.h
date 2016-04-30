@@ -42,6 +42,7 @@ class handler_server : public QObject
         void on_get_clients();
         void on_start();
         void on_change_phase(QJsonObject);
+        void on_game_over(QJsonObject);
 
     public slots:
         void statusConnected();

@@ -6,6 +6,7 @@
 #include "handler_client.h"
 #include "login.h"
 #include "game.h"
+#include "gameover.h"
 
 
 
@@ -24,6 +25,7 @@ class interface : public QObject
     private:
         login *w_login;
         game *w_game;
+        gameover *w_gameover;
 };
 
 #endif // INTERFACE_H

@@ -6,46 +6,18 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>290</width>
-    <height>177</height>
+    <width>400</width>
+    <height>300</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Gameover</string>
+   <string>Dialog</string>
   </property>
-  <property name="windowIcon">
-   <iconset>
-    <normaloff>../../res/icon.png</normaloff>../../res/icon.png</iconset>
-  </property>
-  <widget class="QLabel" name="labelGameover">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>20</y>
-     <width>251</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Lato</family>
-     <pointsize>20</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>Congratulation :)</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignCenter</set>
-   </property>
-  </widget>
   <widget class="QPushButton" name="buttonOK">
    <property name="geometry">
     <rect>
-     <x>60</x>
-     <y>120</y>
+     <x>120</x>
+     <y>180</y>
      <width>161</width>
      <height>33</height>
     </rect>
@@ -62,11 +34,35 @@
     <string>OK</string>
    </property>
   </widget>
+  <widget class="QLabel" name="labelGameover">
+   <property name="geometry">
+    <rect>
+     <x>60</x>
+     <y>80</y>
+     <width>271</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Lato</family>
+     <pointsize>20</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Game Over :(</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
   <widget class="QLabel" name="labelWinner">
    <property name="geometry">
     <rect>
-     <x>80</x>
-     <y>80</y>
+     <x>100</x>
+     <y>140</y>
      <width>191</width>
      <height>20</height>
     </rect>

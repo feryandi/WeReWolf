@@ -172,7 +172,7 @@ void handler_server::readMessage()
                 emit on_change_phase(json_object);
 
             } else if (method == "game_over"){
-
+                emit on_game_over(json_object);
             }
         }
 
