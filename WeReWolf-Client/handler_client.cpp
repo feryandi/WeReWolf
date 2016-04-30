@@ -2,13 +2,13 @@
 
 handler_client connection_client;
 
-handler_client::handler_client(QObject *parent) : QObject(parent)
+handler_client::handler_client(QObject *parent) : QObject(parent), last_KPU(-1)
 {
 }
 
 int handler_client::getCounter()
 {
-    return local_counter;
+    return counter_local;
 }
 
 int handler_client::getLastKPU()
@@ -18,7 +18,7 @@ int handler_client::getLastKPU()
 
 void handler_client::setCounter(int c)
 {
-    local_counter = c;
+    counter_local = c;
 }
 
 void handler_client::setLastKPU(int c)
@@ -28,7 +28,7 @@ void handler_client::setLastKPU(int c)
 
 void handler_client::resetCounter()
 {
-    local_counter = 0;
+    counter_local = 0;
 }
 
 void handler_client::doListen(quint16 client_port)
@@ -71,10 +71,12 @@ void handler_client::readMessage()
                     description = json_object.value("description");
                     emit on_fail_or_error(description.toString());
 
-                /*} else if (last_sent_method == "prepare_proposal" && status == "ok"){
-
-                    emit on_login();
-                */
+                } else if (last_sent_method == "prepare_proposal" && status == "ok"){
+                    counter_prepare++;
+                    qDebug() << "Prepare Counter Sekarang = " << counter_prepare;
+                    if (counter_prepare == connection_server.getClients().size()-1){
+                        accept_proposal();
+                    }
                 }
 
             } else if (json_object.contains("method")){
@@ -85,7 +87,7 @@ void handler_client::readMessage()
                 if (method == "prepare_proposal"){
                     emit on_accept_prepare_proposal(json_object,sender_ip,sender_port);
                 } else if (method == "accept_proposal"){
-
+                    emit on_accept_accept_proposal(json_object,sender_ip,sender_port);
                 }
             }
 
@@ -105,6 +107,7 @@ void handler_client::prepare_proposal()
 {
     int size = connection_server.getClients().size();
     int newcounter = connection_client.getCounter() + 1;
+    counter_prepare = 0;
     for (int i = 0; i < size; i++)
     {
         QJsonValue playerid;
@@ -128,6 +131,43 @@ void handler_client::prepare_proposal()
             connection_client.setCounter(newcounter);
             message.insert("method", "prepare_proposal");
             message.insert("proposal_id", json_array);
+
+            connection_client.setLastKPU(playerid.toInt());
+
+            sendMessage(address,port,message);
+        }
+    }
+}
+
+void handler_client::accept_proposal()
+{
+    int size = connection_server.getClients().size();
+    int newcounter = connection_client.getCounter() + 1;
+    counter_prepare = 0;
+    for (int i = 0; i < size; i++)
+    {
+        QJsonValue playerid;
+        playerid = connection_server.getClientId();
+
+        if (i != playerid.toInt())
+        {
+            QJsonObject json_object = connection_server.getClients().at(i).toObject();
+            qDebug() << json_object;
+            QString address = json_object.value("address").toString();
+            QString port = json_object.value("port").toString();
+
+            /* send message */
+            QJsonObject message;
+            QJsonArray json_array;
+
+            json_array.insert(0,newcounter);
+            json_array.insert(1,playerid);
+            qDebug() << "Proposal-id: " << newcounter;
+            qDebug() << "Your player id: " << playerid;
+            connection_client.setCounter(newcounter);
+            message.insert("method", "accept_proposal");
+            message.insert("proposal_id", json_array);
+            message.insert("kpu_id", playerid);
 
             sendMessage(address,port,message);
         }

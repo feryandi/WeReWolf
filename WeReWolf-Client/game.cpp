@@ -86,6 +86,15 @@ void game::do_proposal_prepare(QJsonObject message, QHostAddress sender_ip, quin
             json_object.insert("description","accepted");
             json_object.insert("previous_accepted",lastKPU);
         }
+
+        /* Kalo dia potensial jadi leader dan dia udah dapet proposal lain,
+         * maka dia ngalah ga kirim proposal selama x ms */
+        int size = connection_server.getClients().size();
+        int clientID = static_cast<int>(connection_server.getClientId());
+        if (((clientID + 1) == size) || ((clientID + 1) == (size - 1))) {
+            //QTimer::singleShot(1000, &connection_client, SLOT(prepare_proposal()));
+        }
+
         connection_client.setLastKPU(newKPU);
         connection_client.sendMessage(sender_ip.toString(), QString(sender_port), json_object);
         qDebug() << "Accepting proposal from " << message.value("proposal_id").toArray().at(1) << " with value " << c;
@@ -95,6 +104,29 @@ void game::do_proposal_prepare(QJsonObject message, QHostAddress sender_ip, quin
         connection_client.sendMessage(sender_ip.toString(), QString(sender_port), json_object);
     }
 }
+
+void game::do_proposal_accept(QJsonObject message, QHostAddress sender_ip, quint16 sender_port)
+{
+    int c = message.value("proposal_id").toArray().at(0).toInt();
+    int recentCounter = connection_client.getCounter();
+    int playerId = message.value("proposal_id").toArray().at(1).toInt();
+    int lastKPU = connection_client.getLastKPU();
+    int kpuId = message.value("kpu_id").toInt();
+    QJsonObject json_object;
+
+    if ((recentCounter == c) && ((playerId == lastKPU) && (kpuId  == lastKPU))) {
+        json_object.insert("status","ok");
+        json_object.insert("description","accepted");
+
+        connection_client.sendMessage(sender_ip.toString(), QString(sender_port), json_object);
+        qDebug() << "Konfirmasi KPU " << message.value("proposal_id").toArray().at(1) << " with value " << c;
+    } else {
+        json_object.insert("status","fail");
+        json_object.insert("description","rejected");
+        connection_client.sendMessage(sender_ip.toString(), QString(sender_port), json_object);
+    }
+}
+
 
 void game::on_buttonVote_clicked()
 {

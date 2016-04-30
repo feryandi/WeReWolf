@@ -25,6 +25,8 @@ void interface ::do_login()
     connect(&connection_server, SIGNAL(on_get_clients()), w_game, SLOT(do_populate_players()));
     connect(&connection_server, SIGNAL(on_start()), w_game, SLOT(do_start()));
     connect(&connection_server, SIGNAL(on_change_phase(QJsonObject)), w_game, SLOT(do_set_rule(QJsonObject)));
-    connect(&connection_client, SIGNAL(on_accept_prepare_proposal(QJsonObject,QHostAddress,quint16)), w_game, SLOT(do_proposal_prepare(QJsonObject,QHostAddress,quint16)));
+    connect(&connection_client, SIGNAL(on_accept_prepare_proposal(QJsonObject, QHostAddress, quint16)), w_game, SLOT(do_proposal_prepare(QJsonObject,QHostAddress,quint16)));
+    connect(&connection_client, SIGNAL(on_accept_accept_proposal(QJsonObject, QHostAddress, quint16)), w_game, SLOT(do_proposal_accept(QJsonObject,QHostAddress,quint16)));
+
     w_game->show();
 }

@@ -24,16 +24,20 @@ class handler_client : public QObject
     signals:
         void on_fail_or_error(QString);
         void on_accept_prepare_proposal(QJsonObject,QHostAddress,quint16);
+        void on_accept_accept_proposal(QJsonObject, QHostAddress, quint16);
 
     public slots:
         void readMessage();
         void sendMessage(QString recv_address, QString recv_port, QJsonObject message);
         void prepare_proposal();
+        void accept_proposal();
 
     private:
         QUdpSocket *socket;
         QString last_sent_method;
-        int local_counter;
+        int counter_local;
+        int counter_prepare;
+        int counter_accept;
         int last_KPU;
 };
 

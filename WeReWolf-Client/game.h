@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include <QMainWindow>
+#include <QTimer>
 #include "handler_server.h"
 #include "handler_client.h"
 
@@ -24,6 +25,7 @@ private slots:
     void do_set_rule(QJsonObject message);
     void on_buttonVote_clicked();
     void do_proposal_prepare(QJsonObject message, QHostAddress sender_ip, quint16 sender_port);
+    void do_proposal_accept(QJsonObject message, QHostAddress sender_ip, quint16 sender_port);
 
 private:
     Ui::game *ui;
