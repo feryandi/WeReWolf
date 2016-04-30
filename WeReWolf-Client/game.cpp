@@ -24,37 +24,7 @@ void game::do_start()
     ui->labelRole->show();
     ui->buttonVote->setText("Vote!");
     ui->buttonVote->setEnabled(true);
-    //QJsonArray temp;
-    QString json;
-    /*for (int i = 0; i < connection_server.getClients().size(); i++) {
-        temp.insert(i,0);
-        connection_client.vote_result.insert(i,QJsonValue::fromVariant(temp));
-    }
-    qDebug() << "INI BUAT VOTE NITHO: " << QJsonValue::*/
 
-    for (int i = 0; i < connection_server.getClients().size(); i++) {
-        if ( i == 0 ) {
-            json = "[";
-        }
-
-            QString temp;
-            temp = "[";
-            temp += QString::number(i);
-            temp += ",0]";
-
-            json += temp;
-
-        if ( i == connection_server.getClients().size() - 1 ) {
-            json += "]";
-        } else {
-            json += ",";
-        }
-    }
-    QJsonParseError err;
-    QJsonDocument jsdoc = QJsonDocument::fromJson( json.toUtf8(), &err );
-
-    qDebug() << "ISI JSONNYA VOTING" << json;
-    qDebug() << "INI BUAT VOTING" << jsdoc;
 }
 
 void game::do_wait_until_start()
@@ -67,6 +37,16 @@ void game::do_populate_players()
 {
     /* Night = 0
      * Day = 1 */
+
+    QJsonObject json_object;
+    QJsonArray json_array;
+    for (int i = 0; i < connection_server.getClients().size(); i++) {
+        json_array.insert(0, i);
+        json_array.insert(1, 0);
+        connection_client.vote_result.insert(i, QJsonValue::fromVariant(json_array));
+        json_array.removeFirst();
+        json_array.removeFirst();
+    }
 
     ui->listPlayer->clear();
     QStringList list_player;
@@ -217,7 +197,7 @@ void game::on_buttonVote_clicked()
         quint16 sender_port;
 
         sender_ip = connection_server.getClientDataByUsername(username).value("address").toString();
-        sender_port = (connection_server.getClientDataByUsername(username)).value("port").toInt();
+        sender_port = connection_server.getClientDataByUsername(username).value("port").toString().toInt();
 
         if (connection_server.getCurrentTime() == 1){
             QJsonObject json_object;
@@ -232,6 +212,7 @@ void game::on_buttonVote_clicked()
             json_object.insert("player_id",
                                connection_server.getClientIdByUsername(username));
 
+            qDebug() << "KIRIM KE:" <<  sender_ip << " Poert : " << QString::number(sender_port);
             connection_client.sendMessage(sender_ip, QString::number(sender_port), json_object);
         }
     }

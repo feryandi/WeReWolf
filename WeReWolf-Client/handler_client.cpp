@@ -73,10 +73,6 @@ void handler_client::readMessage()
             json_document = QJsonDocument::fromJson(message_list.at(i));
             json_object = json_document.object();
 
-            //qDebug() << "AAAAA" << json_object << "BBBB";
-            //qDebug() << "CCCCC" << last_sent_method << "DDDD";
-
-
             if (json_object.contains("status")){
                 /* Response Proposer->Acceptor */
                 status = json_object.value("status");
@@ -111,6 +107,13 @@ void handler_client::readMessage()
                 } else if (method == "accept_proposal"){
                     emit on_accept_accept_proposal(json_object,sender_ip,sender_port);
                 } else if (method == "vote_werewolf") {
+                    int player_id_ = json_object.value("player_id").toInt();
+                    int player_count_ = vote_result.at(player_id_).toArray().at(1).toInt();
+
+                    qDebug() << "ARRAEY? = " << vote_result.at(player_id_).toArray();
+                    vote_result.at(player_id_).toArray().replace(1, 5);
+                    qDebug() << "VORE SEKATANG = " << vote_result;
+
                     sendResponse(sender_ip.toString(),QString::number(sender_port),"ok","");
                 }
             }
