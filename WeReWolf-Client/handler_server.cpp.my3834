@@ -136,18 +136,14 @@ void handler_server::readMessage()
 
             } else if (last_sent_method == "client_address" && status == "ok"){
                 //clients = json_object.value("clients").toArray();
-                int size_ = clients.size();
-                for (int i=0; i<size_; i++){
-                    clients.removeFirst();
-                }
-
                 QJsonObject client_;
+
+                for (int i=0; i<clients.size())
+
                 for (int i=0; i<json_object.value("clients").toArray().size(); i++){
                     client_ = json_object.value("clients").toArray().at(i).toObject();
                     clients.push_back(client_);
                 }
-                qDebug() << "AARGHH" << clients;
-
                 emit on_get_clients();
 
             }

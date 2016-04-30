@@ -137,7 +137,40 @@ void handler_client::readMessage()
                         }
                         message.insert("vote_result", final_array);
 
-                        qDebug() << "VORE SEKATANG = " << final_array;
+                        connection_server.sendMessageJSON(message);
+
+                        counter_vote = 0;
+                    }
+                } else if (method == "vote_civilian") {
+                    int player_id_ = json_object.value("player_id").toInt();
+                    vote_map[player_id_]++;
+
+                    counter_vote++;
+
+                    sendResponse(sender_ip.toString(),QString::number(sender_port),"ok","");
+
+                    if ( counter_vote == (3 - connection_server.getDeadPlayer()) ) {
+
+                        QJsonArray json_array;
+                        QJsonArray final_array;
+                        for (int i = 0; i < connection_server.getClients().size(); i++) {
+                            json_array.insert(0, i);
+                            json_array.insert(1, vote_map[i]);
+                            final_array.insert(i, QJsonValue::fromVariant(json_array));
+                            json_array.removeFirst();
+                            json_array.removeFirst();
+                        }
+
+                        QJsonObject message;
+                        message.insert("method", "vote_result_civilian");
+                        int pk = getVoteResult();
+                        if ( pk != -1 ) {
+                            message.insert("vote_status", 1);
+                            message.insert("player_killed", pk);
+                        } else {
+                            message.insert("vote_status", -1);
+                        }
+                        message.insert("vote_result", final_array);
 
                         connection_server.sendMessageJSON(message);
 

@@ -54,6 +54,8 @@ void game::do_populate_players()
     QStringList list_player;
     int size = connection_server.getClients().size();
 
+    //qDebug() << "AARGHH" << connection_server.getClients();
+
     if ( connection_server.getCurrentTime() == 1 ) {
         QJsonObject json_object;
         for (int i=0; i<size; i++){
@@ -86,6 +88,14 @@ void game::do_populate_players()
         connection_client.prepare_proposal();
     }
 
+    QJsonObject player_data;
+    player_data = connection_server.getClientDataByUsername(connection_server.getPlayerName());
+    if (player_data.value("is_alive").toInt() == 0) {
+        ui->buttonVote->setText("You died :(");
+        ui->buttonVote->setDisabled(true);
+    }
+
+
     ui->listPlayer->addItems(list_player);
     ui->listPlayer->show();
 }
@@ -103,6 +113,7 @@ void game::do_set_rule(QJsonObject message)
     json_object.insert("method", "client_address");
     connection_server.sendMessageJSON(json_object);
 
+    connection_client.resetVote();
 
     /*if (message.value("time").toString() == "night") {
         do_populate_players(0);
