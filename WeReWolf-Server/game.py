@@ -33,4 +33,4 @@ class Game:
 		return self.kpu
 
 	def __del__ (self):
-		print "Game from Room ( " + str(self.room) + " ) stopped"
+		print "Game stopped"

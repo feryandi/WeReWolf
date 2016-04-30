@@ -108,11 +108,22 @@ void handler_client::readMessage()
                     emit on_accept_accept_proposal(json_object,sender_ip,sender_port);
                 } else if (method == "vote_werewolf") {
                     int player_id_ = json_object.value("player_id").toInt();
-                    int player_count_ = vote_result.at(player_id_).toArray().at(1).toInt();
+                    //int player_count_ = vote_result.at(player_id_).toArray().at(1).toInt();
+                    vote_map[player_id_]++;
 
-                    qDebug() << "ARRAEY? = " << vote_result.at(player_id_).toArray();
-                    vote_result.at(player_id_).toArray().replace(1, 5);
-                    qDebug() << "VORE SEKATANG = " << vote_result;
+                    QJsonArray json_array;
+                    QJsonArray final_array;
+                    for (int i = 0; i < connection_server.getClients().size(); i++) {
+                        json_array.insert(0, i);
+                        json_array.insert(1, vote_map[i]);
+                        final_array.insert(i, QJsonValue::fromVariant(json_array));
+                        json_array.removeFirst();
+                        json_array.removeFirst();
+                    }
+
+                    qDebug() << "ARRAEY? = " << final_array.at(player_id_).toArray();
+                    //vote_result.at(player_id_).toArray().replace(1, 5);
+                    qDebug() << "VORE SEKATANG = " << final_array;
 
                     sendResponse(sender_ip.toString(),QString::number(sender_port),"ok","");
                 }

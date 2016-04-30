@@ -7,6 +7,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
+#include <map>
 #include "handler_server.h"
 
 class handler_client : public QObject
@@ -22,6 +23,7 @@ class handler_client : public QObject
         void setCounter(int c);
         void setLastKPU(int c);
         void resetCounter();
+        std::map<int, int> vote_map;
         QJsonArray vote_result;
 
     signals:

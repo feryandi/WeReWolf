@@ -46,6 +46,8 @@ void game::do_populate_players()
         connection_client.vote_result.insert(i, QJsonValue::fromVariant(json_array));
         json_array.removeFirst();
         json_array.removeFirst();
+
+        connection_client.vote_map[i] = 0;
     }
 
     ui->listPlayer->clear();
