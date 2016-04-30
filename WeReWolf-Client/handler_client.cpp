@@ -98,6 +98,8 @@ void handler_client::readMessage()
                     json_object_.insert("Description", "Kpu is selected");
 
                     connection_server.sendMessageJSON(json_object_);
+                } else if (last_sent_method == "vote_werewolf" && status == "ok"){
+
                 }
 
             } else if (json_object.contains("method")){
@@ -108,6 +110,8 @@ void handler_client::readMessage()
                     emit on_accept_prepare_proposal(json_object,sender_ip,sender_port);
                 } else if (method == "accept_proposal"){
                     emit on_accept_accept_proposal(json_object,sender_ip,sender_port);
+                } else if (method == "vote_werewolf") {
+                    sendResponse(sender_ip.toString(),QString::number(sender_port),"ok","");
                 }
             }
 
@@ -196,4 +200,12 @@ void handler_client::accept_proposal()
             sendMessage(address,port,message);
         }
     }
+}
+
+void handler_client::sendResponse(QString address, QString port, QString status, QString description)
+{
+    QJsonObject json_object;
+    json_object.insert("status",status);
+    json_object.insert("description",description);
+    sendMessage(address,port,json_object);
 }

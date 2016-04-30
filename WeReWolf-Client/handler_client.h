@@ -22,6 +22,7 @@ class handler_client : public QObject
         void setCounter(int c);
         void setLastKPU(int c);
         void resetCounter();
+        QJsonArray vote_result;
 
     signals:
         void on_fail_or_error(QString);
@@ -33,6 +34,7 @@ class handler_client : public QObject
         void sendMessage(QString recv_address, QString recv_port, QJsonObject message);
         void prepare_proposal();
         void accept_proposal();
+        void sendResponse(QString address, QString port, QString status, QString description);
 
     private:
         QUdpSocket *socket;
@@ -41,6 +43,7 @@ class handler_client : public QObject
         int counter_prepare;
         int counter_accept;
         int last_KPU;
+
 };
 
 /* Universal client connection handler */

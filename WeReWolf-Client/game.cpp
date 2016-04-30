@@ -24,6 +24,37 @@ void game::do_start()
     ui->labelRole->show();
     ui->buttonVote->setText("Vote!");
     ui->buttonVote->setEnabled(true);
+    //QJsonArray temp;
+    QString json;
+    /*for (int i = 0; i < connection_server.getClients().size(); i++) {
+        temp.insert(i,0);
+        connection_client.vote_result.insert(i,QJsonValue::fromVariant(temp));
+    }
+    qDebug() << "INI BUAT VOTE NITHO: " << QJsonValue::*/
+
+    for (int i = 0; i < connection_server.getClients().size(); i++) {
+        if ( i == 0 ) {
+            json = "[";
+        }
+
+            QString temp;
+            temp = "[";
+            temp += QString::number(i);
+            temp += ",0]";
+
+            json += temp;
+
+        if ( i == connection_server.getClients().size() - 1 ) {
+            json += "]";
+        } else {
+            json += ",";
+        }
+    }
+    QJsonParseError err;
+    QJsonDocument jsdoc = QJsonDocument::fromJson( json.toUtf8(), &err );
+
+    qDebug() << "ISI JSONNYA VOTING" << json;
+    qDebug() << "INI BUAT VOTING" << jsdoc;
 }
 
 void game::do_wait_until_start()
@@ -89,6 +120,7 @@ void game::do_set_rule(QJsonObject message)
     QJsonObject json_object;
     json_object.insert("method", "client_address");
     connection_server.sendMessageJSON(json_object);
+
 
     /*if (message.value("time").toString() == "night") {
         do_populate_players(0);
