@@ -56,12 +56,23 @@ class GameServer:
 
 		for player in self.players:
 			if ( player != "" ):
-				rnd = random.randint(0, 1)
-				if ( (werewolf > 0) and ( rnd == 1 ) ):
-					player.setRole("villager")
+				rnd = random.randint(0, 1)				
+				if ( rnd == 1 ):
+					if ( villager <= 0 ):
+						player.setRole("werewolf")
+						werewolf -= 1
+						wfplayer.append(i)
+					else:
+						player.setRole("villager")
+						villager -= 1
 				else:
-					player.setRole("werewolf")
-					wfplayer.append(i)
+					if ( villager <= 0 ):
+						player.setRole("werewolf")
+						werewolf -= 1
+						wfplayer.append(i)
+					else:
+						player.setRole("villager")
+						villager -= 1
 				i += 1
 
 		for player in self.players:
