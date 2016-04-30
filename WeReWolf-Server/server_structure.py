@@ -127,6 +127,10 @@ class GameServer:
 		werewolf = self.getTotalAliveWerewolf()
 		winner = -1
 
+		print "Check Game End State"
+		print "Werewolf: ", werewolf
+		print "Villager: ", villager
+
 		if ( werewolf == villager ):
 			winner = 0
 		elif ( werewolf == 0 ):
@@ -135,15 +139,19 @@ class GameServer:
 			winner = -1
 
 		if ( winner != -1 ):
-			winning = 'undefined'
-			if ( winner == 0 ):
-				winning = 'werewolf'
-			else:
-				winning = 'villager'
+			winning = "undefined"
 
-			self.broadcast({"method":"game_over", 
-								  "winner":winning,
-								  "description":"Game Ended"})
+			if ( winner == 0 ):
+				winning = "werewolf"
+			else:
+				winning = "villager"
+
+			self.game.setWinner(winner)
+			self.game.stopGame()
+
+			for player in self.players:
+				if ( player != "" ):
+					player.getIPort().send(json.dumps({"method":"game_over", "winner":winning, "description":"Game Ended"}) + "\r\n")
 
 	def newPlayer (self, name, iport, udip, udport):
 		i = 0
@@ -212,9 +220,7 @@ class MessageServer:
 						# Register player ke Server
 						self.clientid = GameServer.newPlayer(msg['username'], clientsocket, msg['udp_address'], msg['udp_port'])
 						# Katakan bahwa login berhasil
-						self.sendResponse(clientsocket, json.dumps({"status":"ok", "player_id":self.clientid}))
-						# Berikan list Room yang ada
-						# self.sendResponse(clientsocket, self.objectToJSON("rooms", GameServer))
+						self.sendResponse(clientsocket, json.dumps({"status":"ok", "player_id":self.clientid}))						
 					else:
 						self.sendResponse(clientsocket, json.dumps({"status":"fail", "description":"please wait, game is currently running"}))
 				else:
@@ -233,7 +239,10 @@ class MessageServer:
 				GameServer.startGame()
 
 		elif msg['method'] == 'client_address':
-			self.sendResponse(clientsocket, self.clientsToJSON(GameServer))
+			if ((GameServer.getGame()).isGameStarted()):
+				self.sendResponse(clientsocket, self.clientsToJSON(GameServer))
+			else:
+				self.sendResponse(clientsocket, json.dumps({"status":"fail", "description":"game is not running"}))
 
 		elif msg['method'] == 'vote_result_werewolf':
 			if (msg['vote_status'] == 1):

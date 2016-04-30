@@ -32,5 +32,8 @@ class Game:
 	def getKPU (self):
 		return self.kpu
 
+	def setWinner (self, i):
+		self.winner = i
+
 	def __del__ (self):
 		print "Game stopped"
