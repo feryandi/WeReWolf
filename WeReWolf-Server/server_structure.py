@@ -12,6 +12,45 @@ class GameServer:
 		self.players = [""] * 25 # maximum players online 
 		self.game = Game()
 		self.playerNum = 0
+		self.kpu_voted = 0
+		self.kpu_data = {}
+		self.day_chance = 1
+
+	def resetDayChance(self):
+		self.day_chance = 1
+
+	def decreaseDayChance(self):
+		self.day_chance -= 1
+
+	def getDayChance(self):
+		return self.day_chance
+
+	def setKPUCount (self, i, value):
+		self.kpu_data[i] = value
+
+	def getKPUCount (self, i):
+		return self.kpu_data[i]
+
+	def resetKPUCount(self):
+		self.kpu_data = {}
+
+	def getConsensusKPU (self):
+		maxVote = 0
+		selKPU = -1
+		for kpu_id, votes in self.kpu_data.items():
+			if (votes > maxVote):
+				selKPU = kpu_id
+
+		return selKPU
+
+	def getKPUVoted (self):
+		return self.kpu_voted
+
+	def increaseKPUVoted (self):
+		self.kpu_voted += 1
+
+	def resetKPUVoted(self):
+		self.kpu_voted = 0
 
 	def getGame(self):
 		return self.game
@@ -251,6 +290,8 @@ class MessageServer:
 									  "days": (GameServer.getGame()).getDay(), 
 									  "description":"Werewolf voted, civilian killed"})
 				GameServer.isEndGame()
+			else:	
+				GameServer.broadcast({"method":"vote_now", "phase":"night"})				
 
 		elif msg['method'] == 'vote_result_civilian':
 			if (msg['vote_status'] == 1):
@@ -262,10 +303,31 @@ class MessageServer:
 									  "days": (GameServer.getGame()).getDay(), 
 									  "description":"Civilian voted, someone killed"})
 				GameServer.isEndGame()
+			else:				
+				if (GameServer.getDayChance() != 0):			
+					GameServer.broadcast({"method":"vote_now", "phase":"day"})
+					GameServer.decreaseDayChance()
+				else:
+					GameServer.resetDayChance()
+					GameServer.broadcast({"method":"change_phase", 
+										  "time":"night", 
+										  "days": (GameServer.getGame()).getDay(), 
+										  "description":"Civilian cannot decide. No one killed."})					
 
 		elif msg['method'] == 'accepted_proposal':
-			(GameServer.getGame()).setKPU(msg['kpu_id'])
+			GameServer.setKPUCount(msg['kpu_id'], GameServer.getKPUCount() + 1)
+			GameServer.increaseKPUVoted()
 			self.sendResponse(clientsocket, json.dumps({"status":"ok", "description":"KPU is selected"}))
+
+			if (GameServer.getKPUVoted() > ((GameServer.getTotalPlayer//2) + 1)):
+				kpu_id = GameServer.getConsensusKPU()
+				GameServer.resetKPUVoted()
+				GameServer.resetKPUCount()
+
+				GameServer.broadcast({"method":"kpu_selected", "kpu_id":kpu_id})
+				GameServer.broadcast({"method":"vote_now", "phase":(GameServer.getGame()).getDay()})
+
+			#(GameServer.getGame()).setKPU(msg['kpu_id'])
 
 
 	def clientsToJSON (self, GameServer):
