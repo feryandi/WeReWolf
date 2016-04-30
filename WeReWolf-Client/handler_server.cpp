@@ -181,6 +181,17 @@ int handler_server::getClientIdByUsername(QString username){
     return -1;
 }
 
+QJsonObject handler_server::getClientDataByUsername(QString username){
+    QJsonObject ret;
+    for (int i=0; i<clients.size(); i++){
+        if (clients.at(i).toObject().value("username").toString() == username){
+            ret = clients.at(i).toObject();
+        }
+    }
+    return ret;
+}
+
+
 QJsonArray handler_server::getNonFriends()
 {
     QJsonArray ret;

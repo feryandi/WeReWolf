@@ -24,6 +24,8 @@ class handler_server : public QObject
         QString getPlayerName();
         void setPlayerName(QString player_name_);
         int getClientIdByUsername(QString);
+        QJsonObject getClientDataByUsername(QString);
+
         QJsonArray getNonFriends();
         int getCurrentTime();
         int getCurrentDay();

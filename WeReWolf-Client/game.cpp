@@ -180,8 +180,27 @@ void game::on_buttonVote_clicked()
         json_object.insert("method", "ready");
         connection_server.sendMessageJSON(json_object);
     } else {
-        QJsonObject json_object;
-        json_object.insert("method", "WASU!");
-        connection_client.sendMessage("10.5.22.248", "9999", json_object);
+        QString username = ui->listPlayer->currentItem()->text();
+        QString sender_ip;
+        quint16 sender_port;
+
+        sender_ip = connection_server.getClientDataByUsername(username).value("address").toString();
+        sender_port = (connection_server.getClientDataByUsername(username)).value("port").toInt();
+
+        if (connection_server.getCurrentTime() == 1){
+            QJsonObject json_object;
+            json_object.insert("method", "vote_civilian");
+            json_object.insert("player_id",
+                               connection_server.getClientIdByUsername(username));
+
+            connection_client.sendMessage(sender_ip, QString::number(sender_port), json_object);
+        } else {
+            QJsonObject json_object;
+            json_object.insert("method", "vote_werewolf");
+            json_object.insert("player_id",
+                               connection_server.getClientIdByUsername(username));
+
+            connection_client.sendMessage(sender_ip, QString::number(sender_port), json_object);
+        }
     }
 }
