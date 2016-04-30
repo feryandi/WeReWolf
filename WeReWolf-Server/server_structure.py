@@ -32,7 +32,11 @@ class GameServer:
 		return self.kpu_data[i]
 
 	def resetKPUCount(self):
-		self.kpu_data = {}
+		self.kpu_data = {}		
+		i = 0
+		for player in self.players:
+			self.kpu_data[i] = 0
+			i += 1
 
 	def getConsensusKPU (self):
 		maxVote = 0
@@ -107,6 +111,11 @@ class GameServer:
 		return b
 
 	def startGame (self):
+		i = 0
+		for player in self.players:
+			self.kpu_data[i] = 0
+			i += 1
+
 		werewolf = self.playerNum / 3
 		villager = self.playerNum - werewolf
 
@@ -315,17 +324,23 @@ class MessageServer:
 										  "description":"Civilian cannot decide. No one killed."})					
 
 		elif msg['method'] == 'accepted_proposal':
-			GameServer.setKPUCount(msg['kpu_id'], GameServer.getKPUCount() + 1)
+			GameServer.setKPUCount(msg['kpu_id'], GameServer.getKPUCount(msg['kpu_id']) + 1)
 			GameServer.increaseKPUVoted()
 			self.sendResponse(clientsocket, json.dumps({"status":"ok", "description":"KPU is selected"}))
 
-			if (GameServer.getKPUVoted() > ((GameServer.getTotalPlayer//2) + 1)):
+			if (GameServer.getKPUVoted() > ((GameServer.getTotalPlayer()//2) + 1)):
 				kpu_id = GameServer.getConsensusKPU()
 				GameServer.resetKPUVoted()
 				GameServer.resetKPUCount()
 
-				GameServer.broadcast({"method":"kpu_selected", "kpu_id":kpu_id})
-				GameServer.broadcast({"method":"vote_now", "phase":(GameServer.getGame()).getDay()})
+				for player in self.players:
+					if ( player != "" ):
+						player.getIPort().send(json.dumps({"method":"kpu_selected", "kpu_id":kpu_id}) + "\r\n")
+
+
+				for player in self.players:
+					if ( player != "" ):
+						player.getIPort().send(json.dumps({"method":"vote_now", "phase":(GameServer.getGame()).getDay()}) + "\r\n")
 
 			#(GameServer.getGame()).setKPU(msg['kpu_id'])
 
