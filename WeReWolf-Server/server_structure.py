@@ -35,6 +35,23 @@ class GameServer:
 					return player.getID
 		return -1
 
+	def getTotalAliveWerewolf (self):
+		i = 0
+		for player in self.players:
+			if ( player != "" ):
+				if ( player.getRole() == 'werewolf' ):
+					if ( player.isAlive() ):
+						i += 1
+		return i
+
+	def getTotalAlivePlayer (self):
+		i = 0
+		for player in self.players:
+			if ( player != "" ):
+				if ( player.isAlive() ):
+					i += 1
+		return i
+
 	def broadcast (self, message):
 		msg = json.dumps(message,separators=(',',':'))
 		for player in self.players:
@@ -61,9 +78,6 @@ class GameServer:
 			if ( player != "" ):
 				rnd = random.randint(0, 1)		
 
-				print "Villager Quota Before: ", villager	
-				print "Werewolf Quota Before: ", werewolf
-
 				if ( rnd == 1 ):
 					if ( villager <= 0 ):
 						player.setRole("werewolf")						
@@ -81,9 +95,6 @@ class GameServer:
 						player.setRole("villager")
 						villager -= 1
 				i += 1
-
-				print "Villager Quota After: ", villager	
-				print "Werewolf Quota After: ", werewolf
 
 		for player in self.players:
 			if ( player != "" ):
@@ -110,6 +121,29 @@ class GameServer:
 
 		msg = json.dumps(msgobj.__dict__)
 		return msg
+
+	def isEndGame (self):
+		villager = getTotalAlivePlayer() - getTotalAliveWerewolf()
+		werewolf = getTotalAliveWerewolf()
+		winner = -1
+
+		if ( werewolf == vilagger ):
+			winner = 0
+		elif ( werewolf == 0 ):
+			winner = 1
+		else:
+			winner = -1
+
+		if ( winner != -1 ):
+			winning = 'undefined'
+			if ( winner == 0 ):
+				winning = 'werewolf'
+			else:
+				winning = 'villager'
+
+			GameServer.broadcast({"method":"game_over", 
+								  "winner":winning,
+								  "description":"Game Ended"})
 
 	def newPlayer (self, name, iport, udip, udport):
 		i = 0
@@ -210,6 +244,7 @@ class MessageServer:
 									  "time":"day", 
 									  "days": (GameServer.getGame()).getDay(), 
 									  "description":"Werewolf voted, civilian killed"})
+				GameServer.isEndGame()
 
 		elif msg['method'] == 'vote_result_civilian':
 			if (msg['vote_status'] == 1):
@@ -220,6 +255,7 @@ class MessageServer:
 									  "time":"night", 
 									  "days": (GameServer.getGame()).getDay(), 
 									  "description":"Civilian voted, someone killed"})
+				GameServer.isEndGame()
 
 		elif msg['method'] == 'accepted_proposal':
 			(GameServer.getGame()).setKPU(msg['kpu_id'])
