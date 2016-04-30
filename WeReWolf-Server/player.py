@@ -16,8 +16,8 @@ class Player:
 	def isAlive (self):
 		return self.alive
 
-	def setAlive (self, bool):
-		self.alive = bool
+	def setAlive (self, i):
+		self.alive = i
 
 	def getID (self):
 		return self.id

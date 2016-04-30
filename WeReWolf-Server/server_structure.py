@@ -203,7 +203,8 @@ class MessageServer:
 
 		elif msg['method'] == 'vote_result_werewolf':
 			if (msg['vote_status'] == 1):
-				GameServer.delPlayerByID(msg['player_killed'])
+				#GameServer.delPlayerByID(msg['player_killed'])
+				(GameServer.getPlayerByPID(msg['player_killed'])).setAlive(0)
 				(GameServer.getGame()).changeTime()
 				GameServer.broadcast({"method":"change_phase", 
 									  "time":"day", 
@@ -212,7 +213,8 @@ class MessageServer:
 
 		elif msg['method'] == 'vote_result_civilian':
 			if (msg['vote_status'] == 1):
-				GameServer.delPlayerByID(msg['player_killed'])
+				#GameServer.delPlayerByID(msg['player_killed'])
+				(GameServer.getPlayerByPID(msg['player_killed'])).setAlive(0)
 				(GameServer.getGame()).changeTime()
 				GameServer.broadcast({"method":"change_phase", 
 									  "time":"night", 
