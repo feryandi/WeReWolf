@@ -239,10 +239,7 @@ class MessageServer:
 				GameServer.startGame()
 
 		elif msg['method'] == 'client_address':
-			if ((GameServer.getGame()).isGameStarted()):
-				self.sendResponse(clientsocket, self.clientsToJSON(GameServer))
-			else:
-				self.sendResponse(clientsocket, json.dumps({"status":"fail", "description":"game is not running"}))
+			self.sendResponse(clientsocket, self.clientsToJSON(GameServer))
 
 		elif msg['method'] == 'vote_result_werewolf':
 			if (msg['vote_status'] == 1):
