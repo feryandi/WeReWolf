@@ -138,7 +138,7 @@ class GameServer:
 				if ( player.getID() == pid ):
 					rid = i
 			i += 1
-		delPlayer(rid)
+		self.delPlayer(rid)
 
 
 class MessageServer:

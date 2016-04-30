@@ -2,7 +2,7 @@
 
 handler_client connection_client;
 
-handler_client::handler_client(QObject *parent) : QObject(parent), last_KPU(-1)
+handler_client::handler_client(QObject *parent) : QObject(parent), last_KPU(-1), counter_vote(0)
 {
 }
 
@@ -108,24 +108,41 @@ void handler_client::readMessage()
                     emit on_accept_accept_proposal(json_object,sender_ip,sender_port);
                 } else if (method == "vote_werewolf") {
                     int player_id_ = json_object.value("player_id").toInt();
-                    //int player_count_ = vote_result.at(player_id_).toArray().at(1).toInt();
                     vote_map[player_id_]++;
 
-                    QJsonArray json_array;
-                    QJsonArray final_array;
-                    for (int i = 0; i < connection_server.getClients().size(); i++) {
-                        json_array.insert(0, i);
-                        json_array.insert(1, vote_map[i]);
-                        final_array.insert(i, QJsonValue::fromVariant(json_array));
-                        json_array.removeFirst();
-                        json_array.removeFirst();
-                    }
-
-                    qDebug() << "ARRAEY? = " << final_array.at(player_id_).toArray();
-                    //vote_result.at(player_id_).toArray().replace(1, 5);
-                    qDebug() << "VORE SEKATANG = " << final_array;
+                    counter_vote++;
 
                     sendResponse(sender_ip.toString(),QString::number(sender_port),"ok","");
+
+                    if ( counter_vote == (1 - connection_server.getDeadWerewolf()) ) {
+
+                        QJsonArray json_array;
+                        QJsonArray final_array;
+                        for (int i = 0; i < connection_server.getClients().size(); i++) {
+                            json_array.insert(0, i);
+                            json_array.insert(1, vote_map[i]);
+                            final_array.insert(i, QJsonValue::fromVariant(json_array));
+                            json_array.removeFirst();
+                            json_array.removeFirst();
+                        }
+
+                        QJsonObject message;
+                        message.insert("method", "vote_result_werewolf");
+                        int pk = getVoteResult();
+                        if ( pk != -1 ) {
+                            message.insert("vote_status", 1);
+                            message.insert("player_killed", pk);
+                        } else {
+                            message.insert("vote_status", -1);
+                        }
+                        message.insert("vote_result", final_array);
+
+                        qDebug() << "VORE SEKATANG = " << final_array;
+
+                        connection_server.sendMessageJSON(message);
+
+                        counter_vote = 0;
+                    }
                 }
             }
 
@@ -222,4 +239,29 @@ void handler_client::sendResponse(QString address, QString port, QString status,
     json_object.insert("status",status);
     json_object.insert("description",description);
     sendMessage(address,port,json_object);
+}
+
+int handler_client::getVoteResult() {
+    int killed_player = -1;
+    int votes = 0;
+    bool valid = true;
+    for (std::map<int, int>::iterator it = vote_map.begin(); it != vote_map.end(); ++it) {
+        if ( it->second == votes ) {
+            valid = false;
+        } else if ( it->second > votes ) {
+            killed_player = it->first;
+            votes = it->second;
+            valid = true;
+        }
+    }
+    if (!valid) {
+        killed_player = -1;
+    }
+    return killed_player;
+}
+
+void handler_client::resetVote() {
+    for (int i = 0; i < connection_server.getClients().size(); i++) {
+        vote_map[i] = 0;
+    }
 }

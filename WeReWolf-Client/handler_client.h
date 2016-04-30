@@ -23,7 +23,10 @@ class handler_client : public QObject
         void setCounter(int c);
         void setLastKPU(int c);
         void resetCounter();
+        int getVoteResult();
+        void resetVote();
         std::map<int, int> vote_map;
+        int counter_vote;
         QJsonArray vote_result;
 
     signals:

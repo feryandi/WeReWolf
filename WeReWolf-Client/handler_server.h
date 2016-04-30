@@ -25,6 +25,8 @@ class handler_server : public QObject
         void setPlayerName(QString player_name_);
         int getClientIdByUsername(QString);
         QJsonObject getClientDataByUsername(QString);
+        int getDeadWerewolf();
+        int getDeadPlayer();
 
         QJsonArray getNonFriends();
         int getCurrentTime();

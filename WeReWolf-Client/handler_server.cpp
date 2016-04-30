@@ -218,3 +218,24 @@ void handler_server::setPlayerName(QString player_name_){
     player_name = player_name_;
 }
 
+int handler_server::getDeadWerewolf() {
+    int ret = 0;
+    for (int i = 0; i < clients.size(); i++) {
+        if ( clients.at(i).toObject().value("is_alive") == 0 ) {
+            if ( clients.at(i).toObject().value("role") == "werewolf" ) {
+                ret++;
+            }
+        }
+    }
+    return ret;
+}
+
+int handler_server::getDeadPlayer() {
+    int ret = 0;
+    for (int i = 0; i < clients.size(); i++) {
+        if ( clients.at(i).toObject().value("is_alive") == 0 ) {
+            ret++;
+        }
+    }
+    return ret;
+}
