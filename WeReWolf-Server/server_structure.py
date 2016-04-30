@@ -16,6 +16,9 @@ class GameServer:
 	def getGame(self):
 		return self.game
 
+	def decreasePlayer(self):
+		self.playerNum -= 1
+
 	def getTotalPlayer(self):
 		return self.playerNum
 
@@ -56,10 +59,14 @@ class GameServer:
 
 		for player in self.players:
 			if ( player != "" ):
-				rnd = random.randint(0, 1)				
+				rnd = random.randint(0, 1)		
+
+				print "Villager Quota Before: ", villager	
+				print "Werewolf Quota Before: ", werewolf
+
 				if ( rnd == 1 ):
 					if ( villager <= 0 ):
-						player.setRole("werewolf")
+						player.setRole("werewolf")						
 						werewolf -= 1
 						wfplayer.append(i)
 					else:
@@ -74,6 +81,9 @@ class GameServer:
 						player.setRole("villager")
 						villager -= 1
 				i += 1
+
+				print "Villager Quota After: ", villager	
+				print "Werewolf Quota After: ", werewolf
 
 		for player in self.players:
 			if ( player != "" ):
@@ -113,6 +123,7 @@ class GameServer:
 
 	def delPlayer (self, pid):
 		self.players[pid] = ""
+		self.playerNum -= 1
 		a = 0
 		for i in range(pid, (self.playerNum + 1)): 
 			if (self.players[i] != ""):

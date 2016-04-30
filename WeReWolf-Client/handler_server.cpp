@@ -32,6 +32,11 @@ QString handler_server::getLocalAddress()
     return local_address.toString();
 }
 
+QVector<QString> handler_server::getFriends()
+{
+    return friends;
+}
+
 QJsonArray handler_server::getClients()
 {
     return clients;
@@ -42,9 +47,33 @@ QString handler_server::getRole()
     return player_role;
 }
 
-int handler_server::getClientId()
+int handler_server::getPlayerId()
 {
     return player_id;
+}
+
+int handler_server::getCurrentTime()
+{
+    return current_time;
+}
+
+int handler_server::getCurrentDay()
+{
+    return current_day;
+}
+
+void handler_server::setCurrentDay(int current_day_)
+{
+    current_day = current_day_;
+}
+
+void handler_server::setCurrentTime(QString current_time_)
+{
+    if (current_time_ == "night"){
+        current_time = 0;
+    } else {
+        current_time = 1;
+    }
 }
 
 void handler_server::statusConnected()
@@ -122,6 +151,13 @@ void handler_server::readMessage()
             if (method == "start"){
                 /* Set user role */
                 player_role = json_object.value("role").toString();
+
+                QString friend_;
+                for (int i=0; i<json_object.value("friend").toArray().size(); i++){
+                    friend_ = json_object.value("friend").toArray().at(i).toString();
+                    friends.push_back(friend_);
+                }
+
                 emit on_start();
                 emit on_change_phase(json_object);
 
@@ -135,3 +171,39 @@ void handler_server::readMessage()
 
     }
 }
+
+int handler_server::getClientIdByUsername(QString username){
+    for (int i=0; i<clients.size(); i++){
+        if (clients.at(i).toObject().value("username").toString() == username){
+            return clients.at(i).toObject().value("player_id").toInt();
+        }
+    }
+    return -1;
+}
+
+QJsonArray handler_server::getNonFriends()
+{
+    QJsonArray ret;
+    for (int i=0; i<clients.size(); i++){
+        bool is_friend = false;
+        for (int j=0; j<friends.size(); j++){
+            if ( friends.at(j) == clients.at(i).toObject().value("username").toString() ) {
+                is_friend = true;
+            }
+        }
+        if (!is_friend) {
+            ret.insert(0, clients.at(i).toObject().value("username").toString());
+        }
+    }
+
+    return ret;
+}
+
+QString handler_server::getPlayerName(){
+    return player_name;
+}
+
+void handler_server::setPlayerName(QString player_name_){
+    player_name = player_name_;
+}
+

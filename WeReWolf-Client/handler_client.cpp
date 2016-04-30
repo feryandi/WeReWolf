@@ -134,7 +134,7 @@ void handler_client::prepare_proposal()
     for (int i = 0; i < size; i++)
     {
         QJsonValue playerid;
-        playerid = connection_server.getClientId();
+        playerid = connection_server.getPlayerId();
 
         if (i != playerid.toInt())
         {
@@ -170,7 +170,7 @@ void handler_client::accept_proposal()
     for (int i = 0; i < size; i++)
     {
         QJsonValue playerid;
-        playerid = connection_server.getClientId();
+        playerid = connection_server.getPlayerId();
 
         if (i != playerid.toInt())
         {

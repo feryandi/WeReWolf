@@ -18,8 +18,18 @@ class handler_server : public QObject
         void doConnect(QString server_ip, quint16 server_port);
         QString getLocalAddress();
         QJsonArray getClients();
+        QVector<QString> getFriends();
         QString getRole();
-        int getClientId();
+        int getPlayerId();
+        QString getPlayerName();
+        void setPlayerName(QString player_name_);
+        int getClientIdByUsername(QString);
+        QJsonArray getNonFriends();
+        int getCurrentTime();
+        int getCurrentDay();
+        void setCurrentDay(int current_day_);
+        void setCurrentTime(QString current_time_);
+
 
     signals:
         void on_fail_or_error(QString);
@@ -40,8 +50,12 @@ class handler_server : public QObject
         QHostAddress local_address;
         QString last_sent_method;
         QJsonArray clients;
+        QVector<QString> friends;
         QString player_role;
+        int current_time;
+        int current_day;
         int player_id;
+        QString player_name;
 };
 
 /* Universal server connection handler */

@@ -25,6 +25,7 @@ void login::on_buttonPlay_clicked()
     if (ui->textNickname->text() != ""){
         nickname = ui->textNickname->text();
     }
+    connection_server.setPlayerName(nickname);
     QString server_ip = ui->textServerIP->text();
     qint16 server_port = ui->textServerPort->text().toInt();
     QString client_port = ui->textClientPort->text();

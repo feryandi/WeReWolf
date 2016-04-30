@@ -20,15 +20,10 @@ game::~game()
 
 void game::do_start()
 {
-    ui->labelRole->setText("You are " + connection_server.getRole() + "!");
+    ui->labelRole->setText(connection_server.getPlayerName() + ", you are " + connection_server.getRole() + "!");
     ui->labelRole->show();
     ui->buttonVote->setText("Vote!");
     ui->buttonVote->setEnabled(true);
-
-    /* Send list clients message */
-    QJsonObject json_object;
-    json_object.insert("method", "client_address");
-    connection_server.sendMessageJSON(json_object);
 }
 
 void game::do_wait_until_start()
@@ -39,17 +34,39 @@ void game::do_wait_until_start()
 
 void game::do_populate_players()
 {
+    /* Night = 0
+     * Day = 1 */
+
     ui->listPlayer->clear();
     QStringList list_player;
-    QJsonObject json_object;
     int size = connection_server.getClients().size();
-    for (int i=0; i<size; i++){
-        json_object = connection_server.getClients().at(i).toObject();
-        list_player += json_object.value("username").toString();
+
+    if ( connection_server.getCurrentTime() == 1 ) {
+        QJsonObject json_object;
+        for (int i=0; i<size; i++){
+            json_object = connection_server.getClients().at(i).toObject();
+            if (json_object.value("is_alive").toInt() == 1){
+                list_player += json_object.value("username").toString();
+            }
+        }
+         ui->buttonVote->setEnabled(true);
+    } else {
+        QJsonArray json_array;
+        json_array = connection_server.getNonFriends();
+        for (int i=0; i<json_array.size(); i++){
+            list_player += json_array.at(i).toString();
+        }
+
+        if (connection_server.getRole() == "villager"){
+            ui->buttonVote->setDisabled(true);
+        }
+
+        qDebug() << "Total non-friends: " << json_array.size();
     }
 
-    qDebug() << "Total client: " << size;
-    int clientID = static_cast<int>(connection_server.getClientId());
+    qDebug() << "Total client: " << connection_server.getClients().size();
+
+    int clientID = static_cast<int>(connection_server.getPlayerId());
     if (((clientID + 1) == size) || ((clientID + 1) == (size - 1)))
     {
         qDebug() << "Ngirim Proposal";
@@ -64,7 +81,20 @@ void game::do_set_rule(QJsonObject message)
 {
     ui->labelTime->setText(message.value("time").toString() + " - " + message.value("day").toString());
     ui->textNarration->setText(message.value("description").toString());
-    //int size = connection_server.getClients().size();
+
+    connection_server.setCurrentTime(message.value("time").toString());
+    connection_server.setCurrentDay(message.value("day").toInt());
+
+    /* Send list clients message */
+    QJsonObject json_object;
+    json_object.insert("method", "client_address");
+    connection_server.sendMessageJSON(json_object);
+
+    /*if (message.value("time").toString() == "night") {
+        do_populate_players(0);
+    } else {
+        do_populate_players(1);
+    }*/
 }
 
 void game::do_proposal_prepare(QJsonObject message, QHostAddress sender_ip, quint16 sender_port)
@@ -94,7 +124,7 @@ void game::do_proposal_prepare(QJsonObject message, QHostAddress sender_ip, quin
         /* Kalo dia potensial jadi leader dan dia udah dapet proposal lain,
          * maka dia ngalah ga kirim proposal selama x ms */
         int size = connection_server.getClients().size();
-        int clientID = static_cast<int>(connection_server.getClientId());
+        int clientID = static_cast<int>(connection_server.getPlayerId());
         if (((clientID) == size-1) || ((clientID) == (size - 2))) {
             if (connection_client.getCounterPrepare() >= (size-1)) {
                 //QTimer::singleShot(1000, &connection_client, SLOT(accept_proposal()));
