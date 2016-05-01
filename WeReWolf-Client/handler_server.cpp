@@ -200,6 +200,8 @@ void handler_server::readMessage() {
                     clients.push_back(client_);
                 }
                 emit on_get_clients();
+            } else if (last_sent_method == "leave" && status == "ok"){
+                QApplication::quit();
             }
         } else if (json_object.contains("method")) {
             /* Request Server->Client */

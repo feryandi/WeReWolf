@@ -19,7 +19,7 @@ void gameover::on_buttonOK_clicked() {
     QJsonObject json_object;
     json_object.insert("method", "leave");
     connection_server.sendMessageJSON(json_object);
-    QApplication::quit();
+    //QApplication::quit();
 }
 
 void gameover::do_show(QJsonObject data) {
