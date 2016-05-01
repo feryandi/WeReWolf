@@ -159,7 +159,7 @@ class GameServer:
 				self.time = "day"
 				self.role = ""
 				self.friend = []
-				self.description = "game is started"
+				self.description = "Disuatu desa yang damai, warga dikejutkan dengan rumor adanya Werewolf yang akan membunuh warga-warga dimalam hari. Warga merasa resah dan ingin membunuh juga. Siapakah yang akan ingin kamu bunuh?"
 
 		msgobj = message()
 
@@ -203,8 +203,7 @@ class GameServer:
 			for player in self.players:
 				if ( player != "" ):
 					player.getIPort().send(json.dumps({"method":"game_over", "winner":winning, "description":"Game Ended"}) + "\n")
-					self.delPlayerByID(i)
-					i += 1
+					print "Send Game Over to ", player.getName()
 
 	def newPlayer (self, name, iport, udip, udport):
 		i = 0
@@ -294,7 +293,7 @@ class MessageServer:
 		elif msg['method'] == 'ready':
 			(GameServer.getPlayerByPID(self.clientid)).setReadiness(True)
 			self.sendResponse(clientsocket, json.dumps({"status":"ok", "description":"Tunggu pemain lain untuk bersiap memulai permainan"}))
-			if ( (GameServer.isAllReady()) and (GameServer.getTotalPlayer() >= 3) ):
+			if ( (GameServer.isAllReady()) and (GameServer.getTotalPlayer() >= 6) ):
 				GameServer.startGame()
 
 		elif msg['method'] == 'client_address':
@@ -307,14 +306,14 @@ class MessageServer:
 			if (msg['vote_status'] == 1):
 				(GameServer.getPlayerByPID(msg['player_killed'])).setAlive(0)
 				name = (GameServer.getPlayerByPID(msg['player_killed'])).getName()
-				desc = "Bulan pun terbenam, dan matahari menyinari wajah warga desa. Warga mendapati " + nama + " tewas terbunuh. Werewolf beraksi kembali dan harus segera dihentikan!"
+				desc = "Bulan pun terbenam, dan matahari menyinari wajah warga desa. Warga mendapati " + name + " tewas terbunuh. Werewolf beraksi kembali dan harus segera dihentikan!"
 				
 				(GameServer.getGame()).changeTime()
+				GameServer.isEndGame()
 				GameServer.broadcast({"method":"change_phase", 
 									  "time":"day", 
 									  "days": (GameServer.getGame()).getDay(), 
 									  "description":desc})
-				GameServer.isEndGame()
 			else:	
 				GameServer.broadcast({"method":"vote_now", "phase":"night"})				
 
@@ -322,14 +321,14 @@ class MessageServer:
 			if (msg['vote_status'] == 1):
 				(GameServer.getPlayerByPID(msg['player_killed'])).setAlive(0)
 				name = (GameServer.getPlayerByPID(msg['player_killed'])).getName()
-				desc = "Kegelapan mulai menyelimuti keheningan desa. Warga desa mendapatkan kesepakatan untuk membunuh " + nama + " sebelum kegelapan menyelimuti malam. Selamat jalan, " + nama + "!"
+				desc = "Kegelapan mulai menyelimuti keheningan desa. Warga desa mendapatkan kesepakatan untuk membunuh " + name + " sebelum kegelapan menyelimuti malam. Selamat jalan, " + name + "!"
 
 				(GameServer.getGame()).changeTime()
+				GameServer.isEndGame()
 				GameServer.broadcast({"method":"change_phase", 
 									  "time":"night", 
 									  "days": (GameServer.getGame()).getDay(), 
 									  "description":desc})
-				GameServer.isEndGame()
 			else:				
 				if (GameServer.getDayChance() != 0):			
 					GameServer.broadcast({"method":"vote_now", "phase":"day"})

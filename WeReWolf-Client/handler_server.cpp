@@ -2,7 +2,7 @@
 
 handler_server connection_server;
 
-handler_server::handler_server(QObject *parent) : QObject(parent), last_sent_method(""), kpu_id(-1)
+handler_server::handler_server(QObject *parent) : QObject(parent), last_sent_method(""), kpu_id(-1), game_over(false)
 {
 }
 
@@ -169,9 +169,11 @@ void handler_server::readMessage()
                 emit on_change_phase(json_object);
 
             } else if (method == "change_phase"){
-                emit on_change_phase(json_object);
-
+                if(!game_over) {
+                    emit on_change_phase(json_object);
+                }
             } else if (method == "game_over"){
+                game_over = true;
                 emit on_game_over(json_object);
             } else if (method == "kpu_selected") {
                 kpu_id = json_object.value("kpu_id").toInt();

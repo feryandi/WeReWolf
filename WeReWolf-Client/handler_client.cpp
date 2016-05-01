@@ -113,7 +113,7 @@ void handler_client::readMessage()
 
                 sendResponse(sender_ip.toString(),sender_port,"ok","");
 
-                if ( counter_vote == (1 - connection_server.getDeadWerewolf()) ) {
+                if ( counter_vote == (2 - connection_server.getDeadWerewolf()) ) {
 
                     QJsonArray json_array;
                     QJsonArray final_array;
@@ -148,7 +148,7 @@ void handler_client::readMessage()
 
                 sendResponse(sender_ip.toString(),sender_port,"ok","");
 
-                if ( counter_vote == (3 - connection_server.getDeadPlayer()) ) {
+                if ( counter_vote == (6 - connection_server.getDeadPlayer()) ) {
 
                     QJsonArray json_array;
                     QJsonArray final_array;

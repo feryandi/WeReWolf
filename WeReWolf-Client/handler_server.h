@@ -35,6 +35,7 @@ class handler_server : public QObject
         void setCurrentDay(int current_day_);
         void setCurrentTime(QString current_time_);
         int kpu_id;
+        bool game_over;
 
 
     signals:

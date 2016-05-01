@@ -10,7 +10,7 @@ game::game(QWidget *parent) :
 
     ui->setupUi(this);
     ui->labelTime->setText("Please press READY to start the game!");
-    ui->textNarration->setText("~ When the night comes, it's time for darkness to approach. ~");
+    ui->textNarration->setText("When the night comes, it's time for darkness to approach.");
     ui->textNarration->setAlignment(Qt::AlignHCenter);
     ui->listPlayer->hide();
     ui->labelRole->hide();
@@ -26,8 +26,6 @@ void game::do_start()
     ui->labelRole->setText(connection_server.getPlayerName() + ", you are " + connection_server.getRole() + "!");
     ui->labelRole->show();
     ui->buttonVote->setText("Vote!");
-    //ui->buttonVote->setEnabled(true);
-
 }
 
 void game::do_wait_until_start()
@@ -57,8 +55,6 @@ void game::do_populate_players()
     QStringList list_player;
     int size = connection_server.getClients().size();
 
-    //qDebug() << "AARGHH" << connection_server.getClients();
-
     if ( connection_server.getCurrentTime() == 1 ) {
         QJsonObject json_object;
         for (int i=0; i<size; i++){
@@ -67,7 +63,6 @@ void game::do_populate_players()
                 list_player += json_object.value("username").toString();
             }
         }
-         //ui->buttonVote->setEnabled(true);
     } else {
         QJsonArray json_array;
         json_array = connection_server.getNonFriends();
@@ -101,14 +96,6 @@ void game::do_populate_players()
         } else {
             timer->stop();
         }
-
-        //while(connection_server.kpu_id == -1){
-        //    connection_client.prepare_proposal();
-           // QTime dieTime= QTime::currentTime().addSecs(1);
-            //    while (QTime::currentTime() < dieTime)
-           //         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
-
-        //}
     }
 }
 
@@ -127,12 +114,6 @@ void game::do_set_rule(QJsonObject message)
     connection_server.sendMessageJSON(json_object);
 
     connection_client.resetVote();
-
-    /*if (message.value("time").toString() == "night") {
-        do_populate_players(0);
-    } else {
-        do_populate_players(1);
-    }*/
 }
 
 void game::do_proposal_prepare(QJsonObject message, QHostAddress sender_ip, quint16 sender_port)
@@ -143,11 +124,9 @@ void game::do_proposal_prepare(QJsonObject message, QHostAddress sender_ip, quin
     int newKPU = message.value("proposal_id").toArray().at(1).toInt();
     int lastKPU = connection_client.getLastKPU();
     QJsonObject json_object;
+
     qDebug() << "DO_PROPOSAL_PREPARE";
-    qDebug() << "c = " << c;
-    qDebug() << "recentCounter = " << recentCounter;
-    qDebug() << "lastKPU = " << lastKPU;
-    qDebug() << "newKPU = " << newKPU;
+
     if ((recentCounter < c) || ((recentCounter == c) && (lastKPU  < newKPU))) {
         connection_client.setCounter(c);
 
@@ -197,10 +176,6 @@ void game::do_proposal_accept(QJsonObject message, QHostAddress sender_ip, quint
     QJsonObject json_object;
 
     qDebug() << "DO_PROPOSAL_ACCEPT";
-    qDebug() << "c = " << c;
-    qDebug() << "recentCounter = " << recentCounter;
-    qDebug() << "lastKPU = " << lastKPU;
-    qDebug() << "kpuId = " << kpuId;
 
     if ((recentCounter == c) && ((playerId == lastKPU) && (kpuId  == lastKPU))) {
         json_object.insert("status","ok");
@@ -274,7 +249,7 @@ void game::do_set_kpu_selected()
 void game::do_vote_now()
 {
     ui->buttonVote->setEnabled(true);
-    if ( connection_server.getCurrentTime() == 1 ) {
+    if ( connection_server.getCurrentTime() == 0 ) {
         if (connection_server.getRole() == "civilian"){
             ui->buttonVote->setDisabled(true);
         }
