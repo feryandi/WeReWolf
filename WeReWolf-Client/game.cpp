@@ -5,6 +5,9 @@ game::game(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::game)
 {
+    timer = new QTimer();
+    connect(timer, SIGNAL(timeout()), &connection_client, SLOT(prepare_proposal()));
+
     ui->setupUi(this);
     ui->labelTime->setText("Please press READY to start the game!");
     ui->textNarration->setText("~ When the night comes, it's time for darkness to approach. ~");
@@ -96,8 +99,15 @@ void game::do_populate_players()
     {
         /* Ngirim Proposal Terus-terusan sampe kpu_id diterima */
         qDebug() << "Ngirim Proposal";
+
+        if (connection_server.kpu_id == -1){
+            timer->start(1000);
+        } else {
+            timer->stop();
+        }
+
         //while(connection_server.kpu_id == -1){
-            connection_client.prepare_proposal();
+        //    connection_client.prepare_proposal();
            // QTime dieTime= QTime::currentTime().addSecs(1);
             //    while (QTime::currentTime() < dieTime)
            //         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
@@ -231,8 +241,8 @@ void game::on_buttonVote_clicked()
         QString sender_ip;
         quint16 sender_port;
 
-        sender_ip = connection_server.getClientDataByUsername(username).value("address").toString();
-        sender_port = connection_server.getClientDataByUsername(username).value("port").toInt();
+        sender_ip = connection_server.getClientDataById(connection_client.getLastKPU()).value("address").toString();
+        sender_port = connection_server.getClientDataById(connection_client.getLastKPU()).value("port").toInt();
 
         if (connection_server.getCurrentTime() == 1){
             QJsonObject json_object;
