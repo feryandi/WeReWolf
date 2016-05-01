@@ -75,10 +75,6 @@ void game::do_populate_players()
             list_player += json_array.at(i).toString();
         }
 
-        if (connection_server.getRole() == "civilian"){
-            ui->buttonVote->setDisabled(true);
-        }
-
         qDebug() << "Total non-friends: " << json_array.size();
     }
 
@@ -278,4 +274,9 @@ void game::do_set_kpu_selected()
 void game::do_vote_now()
 {
     ui->buttonVote->setEnabled(true);
+    if ( connection_server.getCurrentTime() == 1 ) {
+        if (connection_server.getRole() == "civilian"){
+            ui->buttonVote->setDisabled(true);
+        }
+    }
 }
