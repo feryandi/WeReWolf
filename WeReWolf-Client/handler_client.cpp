@@ -100,7 +100,7 @@ void handler_client::prepare_proposal()
         QJsonValue playerid;
         playerid = connection_server.getClientId();
 
-        if ((i < size-2))
+        if ((i != playerid)
         {
             QJsonObject json_object = connection_server.getClients().at(i).toObject();
             qDebug() << json_object;
@@ -112,7 +112,7 @@ void handler_client::prepare_proposal()
             QJsonArray json_array;
             qDebug() << "Your player id: " << playerid;
 
-            json_array.insert(0,connection_client.getCounter());
+            json_array.insert(0,connection_client.getCounter() + i);
             json_array.insert(1,playerid);
             message.insert("method", "prepare_proposal");
             message.insert("proposal_id", json_array);
