@@ -23,7 +23,7 @@ void game::do_start()
     ui->labelRole->setText(connection_server.getPlayerName() + ", you are " + connection_server.getRole() + "!");
     ui->labelRole->show();
     ui->buttonVote->setText("Vote!");
-    ui->buttonVote->setEnabled(true);
+    //ui->buttonVote->setEnabled(true);
 
 }
 
@@ -64,7 +64,7 @@ void game::do_populate_players()
                 list_player += json_object.value("username").toString();
             }
         }
-         ui->buttonVote->setEnabled(true);
+         //ui->buttonVote->setEnabled(true);
     } else {
         QJsonArray json_array;
         json_array = connection_server.getNonFriends();
@@ -107,6 +107,7 @@ void game::do_set_rule(QJsonObject message)
 
     connection_server.setCurrentTime(message.value("time").toString());
     connection_server.setCurrentDay(message.value("day").toInt());
+    connection_server.kpu_id = -1;
 
     /* Send list clients message */
     QJsonObject json_object;
@@ -233,4 +234,17 @@ void game::on_buttonVote_clicked()
 
 void game::do_delete() {
     delete this;
+}
+
+void game::do_set_kpu_selected()
+{
+    connection_client.setLastKPU(connection_server.kpu_id);
+    QJsonObject message;
+    message.insert("status","ok");
+    connection_server.sendMessageJSON(message);
+}
+
+void game::do_vote_now()
+{
+    ui->buttonVote->setEnabled(true);
 }

@@ -33,6 +33,7 @@ class handler_server : public QObject
         int getCurrentDay();
         void setCurrentDay(int current_day_);
         void setCurrentTime(QString current_time_);
+        int kpu_id;
 
 
     signals:
@@ -42,7 +43,9 @@ class handler_server : public QObject
         void on_get_clients();
         void on_start();
         void on_change_phase(QJsonObject);
+        void on_kpu_is_selected();
         void on_game_over(QJsonObject);
+        void on_vote_now();
 
     public slots:
         void statusConnected();

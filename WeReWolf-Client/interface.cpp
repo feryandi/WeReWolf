@@ -32,6 +32,8 @@ void interface ::do_login()
     connect(w_gameover, SIGNAL(on_deletegameover()), w_gameover, SLOT(do_delete()));
     connect(w_gameover, SIGNAL(on_deletegameover()), w_login, SLOT(do_destroy()));
     connect(w_gameover, SIGNAL(on_deletegameover()), w_game, SLOT(do_delete()));
+    connect(&connection_server, SIGNAL(on_kpu_is_selected()), w_game, SLOT(do_set_kpu_selected()));
+    connect(&connection_server, SIGNAL(on_vote_now()), w_game, SLOT(do_vote_now()));
 
     w_game->show();
 }

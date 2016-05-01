@@ -178,7 +178,6 @@ void handler_client::readMessage()
                     }
                 }
             }
-
         }
     }
 }
@@ -196,36 +195,38 @@ void handler_client::sendMessage(QString recv_address, QString recv_port, QJsonO
 
 void handler_client::prepare_proposal()
 {
-    int size = connection_server.getClients().size();
-    int newcounter = connection_client.getCounterLocal() + 1;
-    counter_prepare = 0;
-    for (int i = 0; i < size; i++)
-    {
-        QJsonValue playerid;
-        playerid = connection_server.getPlayerId();
-
-        if (i != playerid.toInt())
+    if (connection_server.kpu_id == -1) {
+        int size = connection_server.getClients().size();
+        int newcounter = connection_client.getCounterLocal() + 1;
+        counter_prepare = 0;
+        for (int i = 0; i < size; i++)
         {
-            QJsonObject json_object = connection_server.getClients().at(i).toObject();
-            qDebug() << json_object;
-            QString address = json_object.value("address").toString();
-            QString port = json_object.value("port").toString();
+            QJsonValue playerid;
+            playerid = connection_server.getPlayerId();
 
-            /* send message */
-            QJsonObject message;
-            QJsonArray json_array;
+            if (i != playerid.toInt())
+            {
+                QJsonObject json_object = connection_server.getClients().at(i).toObject();
+                qDebug() << json_object;
+                QString address = json_object.value("address").toString();
+                QString port = json_object.value("port").toString();
 
-            json_array.insert(0,newcounter);
-            json_array.insert(1,playerid);
-            qDebug() << "Proposal-id: " << newcounter;
-            qDebug() << "Your player id: " << playerid;
-            connection_client.setCounter(newcounter);
-            message.insert("method", "prepare_proposal");
-            message.insert("proposal_id", json_array);
+                /* send message */
+                QJsonObject message;
+                QJsonArray json_array;
 
-            connection_client.setLastKPU(playerid.toInt());
+                json_array.insert(0,newcounter);
+                json_array.insert(1,playerid);
+                qDebug() << "Proposal-id: " << newcounter;
+                qDebug() << "Your player id: " << playerid;
+                connection_client.setCounter(newcounter);
+                message.insert("method", "prepare_proposal");
+                message.insert("proposal_id", json_array);
 
-            sendMessage(address,port,message);
+                connection_client.setLastKPU(playerid.toInt());
+
+                sendMessage(address,port,message);
+            }
         }
     }
 }
