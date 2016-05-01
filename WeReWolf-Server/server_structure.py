@@ -99,7 +99,7 @@ class GameServer:
 		msg = json.dumps(message,separators=(',',':'))
 		for player in self.players:
 			if ( player != "" ):
-				player.getIPort().send(msg + "\r\n")
+				player.getIPort().send(msg + "\n")
 
 	def isAllReady (self):
 		b = True
@@ -199,7 +199,7 @@ class GameServer:
 
 			for player in self.players:
 				if ( player != "" ):
-					player.getIPort().send(json.dumps({"method":"game_over", "winner":winning, "description":"Game Ended"}) + "\r\n")
+					player.getIPort().send(json.dumps({"method":"game_over", "winner":winning, "description":"Game Ended"}) + "\n")
 
 	def newPlayer (self, name, iport, udip, udport):
 		i = 0
@@ -244,7 +244,7 @@ class MessageServer:
 		while onLoop:			
 			try:
 				msg = clientsocket.recv(4096)
-				msg = msg.split("\r\n", 1)
+				msg = msg.split("\n", 1)
 				data = msg[0]
 				if not data:
 					break
@@ -377,7 +377,7 @@ class MessageServer:
 
 	def sendResponse (self, clientsocket, msg):
 		print msg
-		clientsocket.send(msg +"\r\n")
+		clientsocket.send(msg +"\n")
 
 	def __del__ (self):
 		self.GameServer.delPlayer(self.clientid)

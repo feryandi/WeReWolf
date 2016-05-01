@@ -187,7 +187,7 @@ void handler_client::sendMessage(QString recv_address, QString recv_port, QJsonO
     QJsonDocument json_document;
     json_document.setObject(message);
     qDebug() << "SEND UDP DATAGRAM: " << json_document;
-    socket->writeDatagram((json_document.toJson(QJsonDocument::Compact) + "\r\n"), QHostAddress(recv_address), recv_port.toUShort());
+    socket->writeDatagram((json_document.toJson(QJsonDocument::Compact) + "\n"), QHostAddress(recv_address), recv_port.toUShort());
     if (message.value("method").toString() != ""){
         last_sent_method = message.value("method").toString();
     }

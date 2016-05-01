@@ -93,7 +93,7 @@ void handler_server::sendMessageJSON(QJsonObject message)
 
     QJsonDocument json_document;
     json_document.setObject(message);
-    if (socket->write(json_document.toJson(QJsonDocument::Compact) + "\r\n") < 0){
+    if (socket->write(json_document.toJson(QJsonDocument::Compact) + "\n") < 0){
         qDebug() << "Error: " << socket->errorString();
     } else{
 
