@@ -146,7 +146,9 @@ class GameServer:
 
 		for player in self.players:
 			if ( player != "" ):
-				player.getIPort().send(self.startGameToJSON(player.getRole(), wfplayer))			
+				player.getIPort().send(self.startGameToJSON(player.getRole(), wfplayer))	
+
+		self.game.startGame()		
 
 		return None
 
@@ -197,9 +199,12 @@ class GameServer:
 			self.game.setWinner(winner)
 			self.game.stopGame()
 
+			i = 0
 			for player in self.players:
 				if ( player != "" ):
 					player.getIPort().send(json.dumps({"method":"game_over", "winner":winning, "description":"Game Ended"}) + "\n")
+					self.delPlayerByID(i)
+					i += 1
 
 	def newPlayer (self, name, iport, udip, udport):
 		i = 0
@@ -219,6 +224,9 @@ class GameServer:
 			if (self.players[i] != ""):
 				(self.players[i]).setID(a)
 				a += 1
+
+		if (self.playerNum <= 0):
+			self.game.stopGame()
 
 	def delPlayerByID (self, pid):
 		rid = -1
@@ -285,35 +293,42 @@ class MessageServer:
 
 		elif msg['method'] == 'ready':
 			(GameServer.getPlayerByPID(self.clientid)).setReadiness(True)
-			self.sendResponse(clientsocket, json.dumps({"status":"ok", "description":"waiting for other player to start"}))
+			self.sendResponse(clientsocket, json.dumps({"status":"ok", "description":"Tunggu pemain lain untuk bersiap memulai permainan"}))
 			if ( (GameServer.isAllReady()) and (GameServer.getTotalPlayer() >= 3) ):
 				GameServer.startGame()
 
 		elif msg['method'] == 'client_address':
-			self.sendResponse(clientsocket, self.clientsToJSON(GameServer))
+			if ((GameServer.getGame()).isGameStarted()):
+				self.sendResponse(clientsocket, self.clientsToJSON(GameServer))
+			else:
+				self.sendResponse(clientsocket, json.dumps({"status":"fail", "description":"Game is not running"}))
 
 		elif msg['method'] == 'vote_result_werewolf':
 			if (msg['vote_status'] == 1):
-				#GameServer.delPlayerByID(msg['player_killed'])
 				(GameServer.getPlayerByPID(msg['player_killed'])).setAlive(0)
+				name = (GameServer.getPlayerByPID(msg['player_killed'])).getName()
+				desc = "Bulan pun terbenam, dan matahari menyinari wajah warga desa. Warga mendapati " + nama + " tewas terbunuh. Werewolf beraksi kembali dan harus segera dihentikan!"
+				
 				(GameServer.getGame()).changeTime()
 				GameServer.broadcast({"method":"change_phase", 
 									  "time":"day", 
 									  "days": (GameServer.getGame()).getDay(), 
-									  "description":"Werewolf voted, civilian killed"})
+									  "description":desc})
 				GameServer.isEndGame()
 			else:	
 				GameServer.broadcast({"method":"vote_now", "phase":"night"})				
 
 		elif msg['method'] == 'vote_result_civilian':
 			if (msg['vote_status'] == 1):
-				#GameServer.delPlayerByID(msg['player_killed'])
 				(GameServer.getPlayerByPID(msg['player_killed'])).setAlive(0)
+				name = (GameServer.getPlayerByPID(msg['player_killed'])).getName()
+				desc = "Kegelapan mulai menyelimuti keheningan desa. Warga desa mendapatkan kesepakatan untuk membunuh " + nama + " sebelum kegelapan menyelimuti malam. Selamat jalan, " + nama + "!"
+
 				(GameServer.getGame()).changeTime()
 				GameServer.broadcast({"method":"change_phase", 
 									  "time":"night", 
 									  "days": (GameServer.getGame()).getDay(), 
-									  "description":"Civilian voted, someone killed"})
+									  "description":desc})
 				GameServer.isEndGame()
 			else:				
 				if (GameServer.getDayChance() != 0):			
@@ -324,7 +339,7 @@ class MessageServer:
 					GameServer.broadcast({"method":"change_phase", 
 										  "time":"night", 
 										  "days": (GameServer.getGame()).getDay(), 
-										  "description":"Civilian cannot decide. No one killed."})					
+										  "description":"Warga tidak dapat memilih orang untuk dibunuh. Mungkin akhirnya mereka tahu harusnya mereka panggil polisi saja, bukannya saling membunuh seperti manusia tak beradab. Siang berganti malam tanpa satu orang pun ditumbalkan."})					
 
 		elif msg['method'] == 'accepted_proposal':
 			print "Accepted Proposal from ", self.clientid
