@@ -19,13 +19,9 @@ public:
     ~gameover();
     void closeEvent(QCloseEvent *event);
 
-signals:
-    void on_deletegameover();
-
 private slots:
     void on_buttonOK_clicked();
     void do_show(QJsonObject data);
-    void do_delete();
 
 private:
     Ui::gameover *ui;

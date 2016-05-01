@@ -24,7 +24,7 @@ void gameover::on_buttonOK_clicked()
     QJsonObject json_object;
     json_object.insert("method", "leave");
     connection_server.sendMessageJSON(json_object);
-    emit on_deletegameover();
+    QApplication::quit();
 }
 
 void gameover::do_show(QJsonObject data)
@@ -33,8 +33,3 @@ void gameover::do_show(QJsonObject data)
     this->show();
 }
 
-void gameover::do_delete()
-{
-    QApplication::quit();
-    delete this;
-}

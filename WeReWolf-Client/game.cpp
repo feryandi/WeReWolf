@@ -99,7 +99,7 @@ void game::do_populate_players()
 
     timer->stop();
     if ( connection_server.getCurrentTime() == 1 ) {
-        connection_server.kpu_id = -1;
+        connection_server.setKpuId(-1);
 
         qDebug() << "Start Ngirim Proposal";
 
@@ -109,7 +109,7 @@ void game::do_populate_players()
             /* Ngirim Proposal Terus-terusan sampe kpu_id diterima */
             qDebug() << "Ngirim Proposal";
 
-            if (connection_server.kpu_id == -1){
+            if (connection_server.getKpuId() == -1){
                 ui->buttonVote->setDisabled(true);
                 timer->start(1000);
             } else {
@@ -127,8 +127,7 @@ void game::do_set_rule(QJsonObject message)
     ui->textNarration->setText(message.value("description").toString());
 
     connection_server.setCurrentTime(message.value("time").toString());
-    connection_server.setCurrentDay(message.value("day").toInt());
-    connection_server.kpu_id = -1;
+    connection_server.setKpuId(-1);
 
     /* Send list clients message */
     QJsonObject json_object;
@@ -260,7 +259,7 @@ void game::do_delete() {
 void game::do_set_kpu_selected()
 {
     timer->stop();
-    connection_client.setLastKPU(connection_server.kpu_id);
+    connection_client.setLastKPU(connection_server.getKpuId());
     QJsonObject message;
     message.insert("status","ok");
     connection_server.sendMessageJSON(message);

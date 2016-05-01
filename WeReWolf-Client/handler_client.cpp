@@ -198,7 +198,7 @@ void handler_client::sendMessage(QString recv_address, quint16 recv_port, QJsonO
 
 void handler_client::prepare_proposal()
 {
-    if (connection_server.kpu_id == -1) {
+    if (connection_server.getKpuId()) {
         int size = connection_server.getClients().size();
         int newcounter = connection_client.getCounterLocal() + 1;
         counter_prepare = 0;
@@ -301,8 +301,4 @@ void handler_client::resetVote() {
     for (int i = 0; i < connection_server.getClients().size(); i++) {
         vote_map[i] = 0;
     }
-}
-
-void handler_client::do_delete(){
-    delete this;
 }

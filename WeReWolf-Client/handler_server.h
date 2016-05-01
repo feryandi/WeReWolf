@@ -17,6 +17,10 @@ class handler_server : public QObject
     public:
         explicit handler_server(QObject *parent = 0);
         void doConnect(QString server_ip, quint16 server_port);
+
+        void setKpuId(int kpu_id_);
+        int getKpuId();
+
         QString getLocalAddress();
         QJsonArray getClients();
         QVector<QString> getFriends();
@@ -32,11 +36,8 @@ class handler_server : public QObject
 
         QJsonArray getNonFriends();
         int getCurrentTime();
-        int getCurrentDay();
-        void setCurrentDay(int current_day_);
         void setCurrentTime(QString current_time_);
-        int kpu_id;
-        bool game_over;
+
 
 
     signals:
@@ -51,11 +52,10 @@ class handler_server : public QObject
         void on_vote_now();
 
     public slots:
-        void statusConnected();
-        void statusDisconnected();
         void sendMessageJSON(QJsonObject message);
         void readMessage();
-        void do_delete();
+        void statusConnected();
+        void statusDisconnected();
 
     private:
         QTcpSocket *socket;
@@ -65,9 +65,11 @@ class handler_server : public QObject
         QVector<QString> friends;
         QString player_role;
         int current_time;
-        int current_day;
         int player_id;
         QString player_name;
+
+        int kpu_id;
+        bool game_over;
 };
 
 /* Universal server connection handler */
