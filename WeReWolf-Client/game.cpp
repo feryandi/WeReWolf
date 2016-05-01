@@ -67,7 +67,9 @@ void game::do_populate_players()
         QJsonArray json_array;
         json_array = connection_server.getNonFriends();
         for (int i=0; i<json_array.size(); i++){
-            list_player += json_array.at(i).toString();
+            if (connection_server.getClientDataByUsername(json_array.at(i).toString()).value("is_alive").toInt() == 1){
+                list_player += json_array.at(i).toString();
+            }
         }
 
         qDebug() << "Total non-friends: " << json_array.size();
@@ -76,11 +78,7 @@ void game::do_populate_players()
     qDebug() << "Total client: " << connection_server.getClients().size();
 
     QJsonObject player_data;
-    player_data = connection_server.getClientDataByUsername(connection_server.getPlayerName());
-    if (player_data.value("is_alive").toInt() == 0) {
-        ui->buttonVote->setText("You died :(");
-        ui->buttonVote->setDisabled(true);
-    }
+    ui->buttonVote->setDisabled(true);
 
     ui->listPlayer->addItems(list_player);
     ui->listPlayer->show();
@@ -265,5 +263,11 @@ void game::do_vote_now()
         if (connection_server.getRole() == "civilian"){
             ui->buttonVote->setDisabled(true);
         }
+    }
+
+    player_data = connection_server.getClientDataByUsername(connection_server.getPlayerName());
+    if (player_data.value("is_alive").toInt() == 0) {
+        ui->buttonVote->setText("You died :(");
+        ui->buttonVote->setDisabled(true);
     }
 }
