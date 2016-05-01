@@ -23,7 +23,7 @@ class handler_client : public QObject
 
     signals:
         void on_fail_or_error(QString);
-        void on_accept_prepare_proposal(QJsonObject);
+        void on_accept_prepare_proposal(QJsonObject,QHostAddress,quint16);
 
     public slots:
         void readMessage();

@@ -67,13 +67,15 @@ void game::do_set_rule(QJsonObject message)
     //int size = connection_server.getClients().size();
 }
 
-void game::do_proposal_prepare(QJsonObject message)
+void game::do_proposal_prepare(QJsonObject message, QHostAddress sender_ip, quint16 sender_port)
 {
     int c = message.value("proposal_id").toArray().at(0).toInt();
+    int recentCounter = connection_client.getCounter();
+    int newKPU = message.value("proposal_id").toArray().at(1).toInt();
     int lastKPU = connection_client.getLastKPU();
     QJsonObject json_object;
 
-    if (connection_client.getCounter() < c) {
+    if ((recentCounter < c) || ((recentCounter == c) && (lastKPU  < newKPU))) {
         connection_client.setCounter(c);
 
         if (lastKPU == -1) {
@@ -82,12 +84,15 @@ void game::do_proposal_prepare(QJsonObject message)
         } else {
             json_object.insert("status","ok");
             json_object.insert("description","accepted");
-            json_object.insert("previous_accepted",connection_server.getClientId());
+            json_object.insert("previous_accepted",lastKPU);
         }
-        connection_client.setLastKPU(connection_server.getClientId());
+        connection_client.setLastKPU(newKPU);
+        connection_client.sendMessage(sender_ip.toString(), QString(sender_port), json_object);
         qDebug() << "Accepting proposal from " << message.value("proposal_id").toArray().at(1) << " with value " << c;
     } else {
-
+        json_object.insert("status","fail");
+        json_object.insert("description","rejected");
+        connection_client.sendMessage(sender_ip.toString(), QString(sender_port), json_object);
     }
 }
 

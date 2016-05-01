@@ -83,8 +83,7 @@ void handler_client::readMessage()
                 qDebug() << "Masuk ga yaa";
                 // Cek dia nerima method apa
                 if (method == "prepare_proposal"){
-                    emit on_accept_prepare_proposal(json_object);
-
+                    emit on_accept_prepare_proposal(json_object,sender_ip,sender_port);
                 } else if (method == "accept_proposal"){
 
                 }
@@ -105,6 +104,7 @@ void handler_client::sendMessage(QString recv_address, QString recv_port, QJsonO
 void handler_client::prepare_proposal()
 {
     int size = connection_server.getClients().size();
+    int newcounter = connection_client.getCounter() + 1;
     for (int i = 0; i < size; i++)
     {
         QJsonValue playerid;
@@ -120,12 +120,12 @@ void handler_client::prepare_proposal()
             /* send message */
             QJsonObject message;
             QJsonArray json_array;
-            qDebug() << "Your player id: " << playerid;
-            int newcounter = connection_client.getCounter() + 1;
 
             json_array.insert(0,newcounter);
-            connection_client.setCounter(newcounter);
             json_array.insert(1,playerid);
+            qDebug() << "Proposal-id: " << newcounter;
+            qDebug() << "Your player id: " << playerid;
+            connection_client.setCounter(newcounter);
             message.insert("method", "prepare_proposal");
             message.insert("proposal_id", json_array);
 

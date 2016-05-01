@@ -23,7 +23,7 @@ private slots:
     void do_populate_players();
     void do_set_rule(QJsonObject message);
     void on_buttonVote_clicked();
-    void do_proposal_prepare(QJsonObject message);
+    void do_proposal_prepare(QJsonObject message, QHostAddress sender_ip, quint16 sender_port);
 
 private:
     Ui::game *ui;
