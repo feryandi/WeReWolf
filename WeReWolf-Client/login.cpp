@@ -39,6 +39,6 @@ void login::on_buttonPlay_clicked()
     json_object.insert("method", "join");
     json_object.insert("username", nickname.toStdString().c_str());
     json_object.insert("udp_address", connection_server.getLocalAddress().toStdString().c_str());
-    json_object.insert("udp_port", client_port.toStdString().c_str());
+    json_object.insert("udp_port", client_port.toInt());
     connection_server.sendMessageJSON(json_object);
 }

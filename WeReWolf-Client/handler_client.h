@@ -36,10 +36,10 @@ class handler_client : public QObject
 
     public slots:
         void readMessage();
-        void sendMessage(QString recv_address, QString recv_port, QJsonObject message);
+        void sendMessage(QString recv_address, quint16 recv_port, QJsonObject message);
         void prepare_proposal();
         void accept_proposal();
-        void sendResponse(QString address, QString port, QString status, QString description);
+        void sendResponse(QString address, quint16 port, QString status, QString description);
 
     private:
         QUdpSocket *socket;

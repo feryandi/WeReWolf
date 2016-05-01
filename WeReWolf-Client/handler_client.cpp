@@ -112,7 +112,7 @@ void handler_client::readMessage()
 
                     counter_vote++;
 
-                    sendResponse(sender_ip.toString(),QString::number(sender_port),"ok","");
+                    sendResponse(sender_ip.toString(),sender_port,"ok","");
 
                     if ( counter_vote == (1 - connection_server.getDeadWerewolf()) ) {
 
@@ -147,7 +147,7 @@ void handler_client::readMessage()
 
                     counter_vote++;
 
-                    sendResponse(sender_ip.toString(),QString::number(sender_port),"ok","");
+                    sendResponse(sender_ip.toString(),sender_port,"ok","");
 
                     if ( counter_vote == (3 - connection_server.getDeadPlayer()) ) {
 
@@ -182,12 +182,12 @@ void handler_client::readMessage()
     }
 }
 
-void handler_client::sendMessage(QString recv_address, QString recv_port, QJsonObject message)
+void handler_client::sendMessage(QString recv_address, quint16 recv_port, QJsonObject message)
 {
     QJsonDocument json_document;
     json_document.setObject(message);
     qDebug() << "SEND UDP DATAGRAM: " << json_document;
-    socket->writeDatagram((json_document.toJson(QJsonDocument::Compact) + "\n"), QHostAddress(recv_address), recv_port.toUShort());
+    socket->writeDatagram((json_document.toJson(QJsonDocument::Compact) + "\n"), QHostAddress(recv_address), recv_port);
     if (message.value("method").toString() != ""){
         last_sent_method = message.value("method").toString();
     }
@@ -209,7 +209,7 @@ void handler_client::prepare_proposal()
                 QJsonObject json_object = connection_server.getClients().at(i).toObject();
                 qDebug() << json_object;
                 QString address = json_object.value("address").toString();
-                QString port = json_object.value("port").toString();
+                quint16 port = json_object.value("port").toInt();
 
                 /* send message */
                 QJsonObject message;
@@ -246,7 +246,7 @@ void handler_client::accept_proposal()
             QJsonObject json_object = connection_server.getClients().at(i).toObject();
             qDebug() << json_object;
             QString address = json_object.value("address").toString();
-            QString port = json_object.value("port").toString();
+            quint16 port = json_object.value("port").toInt();
 
             /* send message */
             QJsonObject message;
@@ -267,7 +267,7 @@ void handler_client::accept_proposal()
     }
 }
 
-void handler_client::sendResponse(QString address, QString port, QString status, QString description)
+void handler_client::sendResponse(QString address, quint16 port, QString status, QString description)
 {
     QJsonObject json_object;
     json_object.insert("status",status);

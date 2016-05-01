@@ -159,13 +159,13 @@ void game::do_proposal_prepare(QJsonObject message, QHostAddress sender_ip, quin
         }
 
         connection_client.setLastKPU(newKPU);
-        connection_client.sendMessage(sender_ip.toString(), QString::number(sender_port), json_object);
+        connection_client.sendMessage(sender_ip.toString(), sender_port, json_object);
 
         qDebug() << "Accepting proposal from " << message.value("proposal_id").toArray().at(1) << " with value " << c;
     } else {
         json_object.insert("status","fail");
         json_object.insert("description","rejected");
-        connection_client.sendMessage(sender_ip.toString(), QString::number(sender_port), json_object);
+        connection_client.sendMessage(sender_ip.toString(), sender_port, json_object);
     }
 }
 
@@ -188,7 +188,7 @@ void game::do_proposal_accept(QJsonObject message, QHostAddress sender_ip, quint
         json_object.insert("status","ok");
         json_object.insert("description","accepted");
 
-        connection_client.sendMessage(sender_ip.toString(), QString::number(sender_port), json_object);
+        connection_client.sendMessage(sender_ip.toString(), sender_port, json_object);
         qDebug() << "Konfirmasi KPU " << message.value("proposal_id").toArray().at(1) << " with value " << c;
 
         QJsonObject json_object_;
@@ -201,7 +201,7 @@ void game::do_proposal_accept(QJsonObject message, QHostAddress sender_ip, quint
     } else {
         json_object.insert("status","fail");
         json_object.insert("description","rejected");
-        connection_client.sendMessage(sender_ip.toString(), QString::number(sender_port), json_object);
+        connection_client.sendMessage(sender_ip.toString(), sender_port, json_object);
     }
 }
 
@@ -219,7 +219,7 @@ void game::on_buttonVote_clicked()
         quint16 sender_port;
 
         sender_ip = connection_server.getClientDataByUsername(username).value("address").toString();
-        sender_port = connection_server.getClientDataByUsername(username).value("port").toString().toInt();
+        sender_port = connection_server.getClientDataByUsername(username).value("port").toInt();
 
         if (connection_server.getCurrentTime() == 1){
             QJsonObject json_object;
@@ -227,15 +227,15 @@ void game::on_buttonVote_clicked()
             json_object.insert("player_id",
                                connection_server.getClientIdByUsername(username));
 
-            connection_client.sendMessage(sender_ip, QString::number(sender_port), json_object);
+            connection_client.sendMessage(sender_ip, sender_port, json_object);
         } else {
             QJsonObject json_object;
             json_object.insert("method", "vote_werewolf");
             json_object.insert("player_id",
                                connection_server.getClientIdByUsername(username));
 
-            qDebug() << "KIRIM KE:" <<  sender_ip << " Poert : " << QString::number(sender_port);
-            connection_client.sendMessage(sender_ip, QString::number(sender_port), json_object);
+            qDebug() << "KIRIM KE:" <<  sender_ip << " Poert : " << sender_port;
+            connection_client.sendMessage(sender_ip, sender_port, json_object);
         }
     }
 }
