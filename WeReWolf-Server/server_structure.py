@@ -358,7 +358,10 @@ class MessageServer:
 				GameServer.resetKPUCount()
 
 				GameServer.broadcast({"method":"kpu_selected", "kpu_id":kpu_id})
-				GameServer.broadcast({"method":"vote_now", "phase":(GameServer.getGame()).getDay()})
+				day = "night"
+				if ((GameServer.getGame()).getDay() != 0):
+					day = "day"
+				GameServer.broadcast({"method":"vote_now", "phase":day})
 
 			#(GameServer.getGame()).setKPU(msg['kpu_id'])
 

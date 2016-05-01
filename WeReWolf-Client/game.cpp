@@ -77,12 +77,25 @@ void game::do_populate_players()
 
     qDebug() << "Total client: " << connection_server.getClients().size();
 
-    ui->buttonVote->setDisabled(true);
-
     ui->listPlayer->addItems(list_player);
     ui->listPlayer->show();
 
     qDebug() << "Current time: " <<connection_server.getCurrentTime();
+
+    if ( connection_server.getCurrentTime() == 0 ) {
+        if (connection_server.getRole() == "civilian"){
+            ui->buttonVote->setDisabled(true);
+            ui->buttonVote->setEnabled(false);
+        }
+    }
+
+    QJsonObject player_data;
+    player_data = connection_server.getClientDataByUsername(connection_server.getPlayerName());
+    if (player_data.value("is_alive").toInt() == 0) {
+        ui->buttonVote->setText("You died :(");
+        ui->buttonVote->setDisabled(true);
+        ui->buttonVote->setEnabled(false);
+    }
 
     timer->stop();
     if ( connection_server.getCurrentTime() == 1 ) {
@@ -97,6 +110,7 @@ void game::do_populate_players()
             qDebug() << "Ngirim Proposal";
 
             if (connection_server.kpu_id == -1){
+                ui->buttonVote->setDisabled(true);
                 timer->start(1000);
             } else {
                 timer->stop();
@@ -109,7 +123,7 @@ void game::do_populate_players()
 
 void game::do_set_rule(QJsonObject message)
 {
-    ui->labelTime->setText(message.value("time").toString() + " - day " + message.value("days").toString());
+    ui->labelTime->setText(message.value("time").toString() + " - day " + QString::number(message.value("days").toInt()));
     ui->textNarration->setText(message.value("description").toString());
 
     connection_server.setCurrentTime(message.value("time").toString());
@@ -153,15 +167,11 @@ void game::do_proposal_prepare(QJsonObject message, QHostAddress sender_ip, quin
         int clientID = static_cast<int>(connection_server.getPlayerId());
         if (((clientID) == size-1) || ((clientID) == (size - 2))) {
             if (connection_client.getCounterPrepare() >= (size-1)) {
-                //QTimer::singleShot(1000, &connection_client, SLOT(accept_proposal()));
                 connection_client.accept_proposal();
             }
         }
 
         connection_client.setLastKPU(newKPU);
-        qDebug() << "Sender IP Luqman: " << sender_ip;
-        qDebug() << "Sender Port Luqman: " << sender_port;
-
         connection_client.sendMessage(sender_ip.toString(), sender_port, json_object,0);
 
         qDebug() << "Accepting proposal from " << message.value("proposal_id").toArray().at(1) << " with value " << c;
@@ -258,9 +268,11 @@ void game::do_set_kpu_selected()
 void game::do_vote_now()
 {
     ui->buttonVote->setEnabled(true);
+
     if ( connection_server.getCurrentTime() == 0 ) {
         if (connection_server.getRole() == "civilian"){
             ui->buttonVote->setDisabled(true);
+            ui->buttonVote->setEnabled(false);
         }
     }
 
@@ -269,5 +281,6 @@ void game::do_vote_now()
     if (player_data.value("is_alive").toInt() == 0) {
         ui->buttonVote->setText("You died :(");
         ui->buttonVote->setDisabled(true);
+        ui->buttonVote->setEnabled(false);
     }
 }
