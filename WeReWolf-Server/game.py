@@ -24,7 +24,7 @@ class Game:
 		self.turn += 1
 
 	def getDay (self):
-		return (self.turn / 2)
+		return (self.turn // 2)
 
 	def setKPU (self, kpu_id):
 		self.kpu = kpu_id
