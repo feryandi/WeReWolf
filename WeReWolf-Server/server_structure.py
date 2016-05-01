@@ -117,7 +117,7 @@ class GameServer:
 			i += 1
 
 		werewolf = self.playerNum / 3
-		villager = self.playerNum - werewolf
+		civilian = self.playerNum - werewolf
 
 		wfplayer = []
 		i = 0
@@ -127,21 +127,21 @@ class GameServer:
 				rnd = random.randint(0, 1)		
 
 				if ( rnd == 1 ):
-					if ( villager <= 0 ):
+					if ( civilian <= 0 ):
 						player.setRole("werewolf")						
 						werewolf -= 1
 						wfplayer.append(i)
 					else:
-						player.setRole("villager")
-						villager -= 1
+						player.setRole("civilian")
+						civilian -= 1
 				else:
-					if ( villager <= 0 ):
+					if ( civilian <= 0 ):
 						player.setRole("werewolf")
 						werewolf -= 1
 						wfplayer.append(i)
 					else:
-						player.setRole("villager")
-						villager -= 1
+						player.setRole("civilian")
+						civilian -= 1
 				i += 1
 
 		for player in self.players:
@@ -171,15 +171,15 @@ class GameServer:
 		return msg
 
 	def isEndGame (self):
-		villager = self.getTotalAlivePlayer() - self.getTotalAliveWerewolf()
+		civilian = self.getTotalAlivePlayer() - self.getTotalAliveWerewolf()
 		werewolf = self.getTotalAliveWerewolf()
 		winner = -1
 
 		print "Check Game End State"
 		print "Werewolf: ", werewolf
-		print "Villager: ", villager
+		print "civilian: ", civilian
 
-		if ( werewolf == villager ):
+		if ( werewolf == civilian ):
 			winner = 0
 		elif ( werewolf == 0 ):
 			winner = 1
@@ -192,7 +192,7 @@ class GameServer:
 			if ( winner == 0 ):
 				winning = "werewolf"
 			else:
-				winning = "villager"
+				winning = "civilian"
 
 			self.game.setWinner(winner)
 			self.game.stopGame()
