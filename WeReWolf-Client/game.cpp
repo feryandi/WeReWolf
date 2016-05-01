@@ -77,7 +77,6 @@ void game::do_populate_players()
 
     qDebug() << "Total client: " << connection_server.getClients().size();
 
-    QJsonObject player_data;
     ui->buttonVote->setDisabled(true);
 
     ui->listPlayer->addItems(list_player);
@@ -265,6 +264,7 @@ void game::do_vote_now()
         }
     }
 
+    QJsonObject player_data;
     player_data = connection_server.getClientDataByUsername(connection_server.getPlayerName());
     if (player_data.value("is_alive").toInt() == 0) {
         ui->buttonVote->setText("You died :(");
