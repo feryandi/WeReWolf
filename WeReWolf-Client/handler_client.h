@@ -16,7 +16,9 @@ class handler_client : public QObject
         explicit handler_client(QObject *parent = 0);
         void doListen(quint16 client_port);
         int getCounter();
+        int getLastKPU();
         void setCounter(int c);
+        void setLastKPU(int c);
         void resetCounter();
 
     signals:
@@ -32,6 +34,7 @@ class handler_client : public QObject
         QUdpSocket *socket;
         QString last_sent_method;
         int local_counter;
+        int last_KPU;
 };
 
 /* Universal client connection handler */

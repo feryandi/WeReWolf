@@ -70,12 +70,25 @@ void game::do_set_rule(QJsonObject message)
 void game::do_proposal_prepare(QJsonObject message)
 {
     int c = message.value("proposal_id").toArray().at(0).toInt();
+    int lastKPU = connection_client.getLastKPU();
+    QJsonObject json_object;
 
-    if (connection_client.getCounter() <= c) {
+    if (connection_client.getCounter() < c) {
         connection_client.setCounter(c);
-        qDebug() << "Accepting proposal from " << message.value("proposal_id").toArray().at(1) << " with value " << c;
-    }
 
+        if (lastKPU == -1) {
+            json_object.insert("status","ok");
+            json_object.insert("description","accepted");
+        } else {
+            json_object.insert("status","ok");
+            json_object.insert("description","accepted");
+            json_object.insert("previous_accepted",connection_server.getClientId());
+        }
+        connection_client.setLastKPU(connection_server.getClientId());
+        qDebug() << "Accepting proposal from " << message.value("proposal_id").toArray().at(1) << " with value " << c;
+    } else {
+
+    }
 }
 
 void game::on_buttonVote_clicked()
