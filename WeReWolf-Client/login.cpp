@@ -7,6 +7,13 @@ login::login(QWidget *parent) :
     nickname("user_name")
 {
     ui->setupUi(this);
+    ui->labelNickname->setStyleSheet("QLabel { color : white; }");
+    ui->label->setStyleSheet("QLabel { color : white; }");
+    ui->labelServerIP->setStyleSheet("QLabel { color : white; }");
+    ui->labelServerPort->setStyleSheet("QLabel { color : white; }");
+    //ui->labelBackground->setPixmap(QPixmap(":/assets/login-bg.png"));
+
+    //qDebug()<<"File exists -"<<QFileInfo(":/assets/login-bg.png").exists()<<" "<<QFileInfo(":/assets/login-bg.png").absoluteFilePath();
 }
 
 login::~login()

@@ -30,3 +30,6 @@ HEADERS  += login.h \
 FORMS    += login.ui \
     game.ui \
     gameover.ui
+
+RESOURCES += \
+    resources.qrc

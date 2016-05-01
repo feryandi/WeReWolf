@@ -11,53 +11,16 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>login</string>
+   <string>Welcome to the Village!</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QLabel" name="labelTitle">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>10</y>
-      <width>501</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Lato</family>
-      <pointsize>20</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>WeReWolf</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="Line" name="line">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>40</y>
-      <width>461</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
    <widget class="QPushButton" name="buttonPlay">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>290</x>
       <y>150</y>
-      <width>501</width>
-      <height>31</height>
+      <width>221</width>
+      <height>26</height>
      </rect>
     </property>
     <property name="font">
@@ -72,7 +35,7 @@
      <enum>Qt::TabFocus</enum>
     </property>
     <property name="text">
-     <string>Play!</string>
+     <string>PLAY</string>
     </property>
     <property name="checkable">
      <bool>false</bool>
@@ -118,8 +81,8 @@
    <widget class="QLabel" name="labelNickname">
     <property name="geometry">
      <rect>
-      <x>280</x>
-      <y>70</y>
+      <x>290</x>
+      <y>110</y>
       <width>81</width>
       <height>20</height>
      </rect>
@@ -130,8 +93,14 @@
       <pointsize>11</pointsize>
      </font>
     </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
     <property name="text">
      <string>Nickname</string>
+    </property>
+    <property name="textFormat">
+     <enum>Qt::PlainText</enum>
     </property>
    </widget>
    <widget class="QLabel" name="labelServerIP">
@@ -175,7 +144,7 @@
      <string>127.0.0.1</string>
     </property>
     <property name="cursorPosition">
-     <number>1</number>
+     <number>9</number>
     </property>
     <property name="placeholderText">
      <string>localhost</string>
@@ -203,8 +172,8 @@
    <widget class="QLineEdit" name="textNickname">
     <property name="geometry">
      <rect>
-      <x>380</x>
-      <y>70</y>
+      <x>370</x>
+      <y>110</y>
       <width>141</width>
       <height>24</height>
      </rect>
@@ -228,8 +197,8 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>280</x>
-      <y>110</y>
+      <x>20</x>
+      <y>150</y>
       <width>81</width>
       <height>20</height>
      </rect>
@@ -247,8 +216,8 @@
    <widget class="QLineEdit" name="textClientPort">
     <property name="geometry">
      <rect>
-      <x>380</x>
-      <y>110</y>
+      <x>120</x>
+      <y>150</y>
       <width>141</width>
       <height>24</height>
      </rect>
@@ -272,9 +241,40 @@
      <string>9999</string>
     </property>
    </widget>
+   <widget class="QLabel" name="labelBackground">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>551</width>
+      <height>201</height>
+     </rect>
+    </property>
+    <property name="pixmap">
+     <pixmap resource="resources.qrc">:/assets/login-bg.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <zorder>labelBackground</zorder>
+   <zorder>buttonPlay</zorder>
+   <zorder>textServerPort</zorder>
+   <zorder>labelNickname</zorder>
+   <zorder>labelServerIP</zorder>
+   <zorder>textServerIP</zorder>
+   <zorder>labelServerPort</zorder>
+   <zorder>textNickname</zorder>
+   <zorder>label</zorder>
+   <zorder>textClientPort</zorder>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

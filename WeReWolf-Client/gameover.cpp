@@ -6,6 +6,7 @@ gameover::gameover(QWidget *parent) :
     ui(new Ui::gameover)
 {
     ui->setupUi(this);
+    ui->labelWinner->setStyleSheet("QLabel { color : white; }");
 }
 
 gameover::~gameover()
