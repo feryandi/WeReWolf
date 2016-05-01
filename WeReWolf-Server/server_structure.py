@@ -293,7 +293,7 @@ class MessageServer:
 		elif msg['method'] == 'ready':
 			(GameServer.getPlayerByPID(self.clientid)).setReadiness(True)
 			self.sendResponse(clientsocket, json.dumps({"status":"ok", "description":"Tunggu pemain lain untuk bersiap memulai permainan"}))
-			if ( (GameServer.isAllReady()) and (GameServer.getTotalPlayer() >= 3) ):
+			if ( (GameServer.isAllReady()) and (GameServer.getTotalPlayer() >= 6) ):
 				GameServer.startGame()
 
 		elif msg['method'] == 'client_address':

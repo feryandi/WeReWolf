@@ -85,8 +85,13 @@ void game::do_populate_players()
     ui->listPlayer->addItems(list_player);
     ui->listPlayer->show();
 
+    qDebug() << "Current time: " <<connection_server.getCurrentTime();
+
+    timer->stop();
     if ( connection_server.getCurrentTime() == 1 ) {
         connection_server.kpu_id = -1;
+
+        qDebug() << "Start Ngirim Proposal";
 
         int clientID = static_cast<int>(connection_server.getPlayerId());
         if (((clientID + 1) == size) || ((clientID + 1) == (size - 1)))
@@ -100,6 +105,8 @@ void game::do_populate_players()
                 timer->stop();
             }
         }
+    } else {
+        timer->stop();
     }
 }
 
@@ -244,6 +251,7 @@ void game::do_delete() {
 
 void game::do_set_kpu_selected()
 {
+    timer->stop();
     connection_client.setLastKPU(connection_server.kpu_id);
     QJsonObject message;
     message.insert("status","ok");
