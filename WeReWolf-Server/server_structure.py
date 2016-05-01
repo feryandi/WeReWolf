@@ -293,7 +293,7 @@ class MessageServer:
 		elif msg['method'] == 'ready':
 			(GameServer.getPlayerByPID(self.clientid)).setReadiness(True)
 			self.sendResponse(clientsocket, json.dumps({"status":"ok", "description":"Tunggu pemain lain untuk bersiap memulai permainan"}))
-			if ( (GameServer.isAllReady()) and (GameServer.getTotalPlayer() >= 6) ):
+			if ( (GameServer.isAllReady()) and (GameServer.getTotalPlayer() >= 3) ):
 				GameServer.startGame()
 
 		elif msg['method'] == 'client_address':
@@ -315,7 +315,7 @@ class MessageServer:
 									  "days": (GameServer.getGame()).getDay(), 
 									  "description":desc})
 			else:	
-				GameServer.broadcast({"method":"vote_now", "phase":"night"})				
+				GameServer.broadcast({"method":"vote_now", "phase":"day"})				
 
 		elif msg['method'] == 'vote_result_civilian':
 			if (msg['vote_status'] == 1):
@@ -329,16 +329,18 @@ class MessageServer:
 									  "time":"night", 
 									  "days": (GameServer.getGame()).getDay(), 
 									  "description":desc})
+				GameServer.broadcast({"method":"vote_now", "phase":"night"})
 			else:				
 				if (GameServer.getDayChance() != 0):			
-					GameServer.broadcast({"method":"vote_now", "phase":"day"})
+					GameServer.broadcast({"method":"vote_now", "phase":"night"})
 					GameServer.decreaseDayChance()
 				else:
 					GameServer.resetDayChance()
 					GameServer.broadcast({"method":"change_phase", 
 										  "time":"night", 
 										  "days": (GameServer.getGame()).getDay(), 
-										  "description":"Warga tidak dapat memilih orang untuk dibunuh. Mungkin akhirnya mereka tahu harusnya mereka panggil polisi saja, bukannya saling membunuh seperti manusia tak beradab. Siang berganti malam tanpa satu orang pun ditumbalkan."})					
+										  "description":"Warga tidak dapat memilih orang untuk dibunuh. Mungkin akhirnya mereka tahu harusnya mereka panggil polisi saja, bukannya saling membunuh seperti manusia tak beradab. Siang berganti malam tanpa satu orang pun ditumbalkan."})
+					GameServer.broadcast({"method":"vote_now", "phase":"night"})
 
 		elif msg['method'] == 'accepted_proposal':
 			print "Accepted Proposal from ", self.clientid

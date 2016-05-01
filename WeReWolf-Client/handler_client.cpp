@@ -2,7 +2,7 @@
 
 handler_client connection_client;
 
-handler_client::handler_client(QObject *parent) : QObject(parent), last_KPU(-1), counter_vote(0)
+handler_client::handler_client(QObject *parent) : QObject(parent), last_KPU(-1), counter_vote(0), hardcode_player(6)
 {
 }
 
@@ -113,7 +113,7 @@ void handler_client::readMessage()
 
                 sendResponse(sender_ip.toString(),sender_port,"ok","");
 
-                if ( counter_vote == (2 - connection_server.getDeadWerewolf()) ) {
+                if ( counter_vote == ((hardcode_player/3) - connection_server.getDeadWerewolf()) ) {
 
                     QJsonArray json_array;
                     QJsonArray final_array;
@@ -148,7 +148,7 @@ void handler_client::readMessage()
 
                 sendResponse(sender_ip.toString(),sender_port,"ok","");
 
-                if ( counter_vote == (6 - connection_server.getDeadPlayer()) ) {
+                if ( counter_vote == (hardcode_player - connection_server.getDeadPlayer()) ) {
 
                     QJsonArray json_array;
                     QJsonArray final_array;
@@ -301,4 +301,8 @@ void handler_client::resetVote() {
     for (int i = 0; i < connection_server.getClients().size(); i++) {
         vote_map[i] = 0;
     }
+}
+
+void handler_client::do_delete(){
+    delete this;
 }

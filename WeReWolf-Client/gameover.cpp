@@ -32,5 +32,6 @@ void gameover::do_show(QJsonObject data)
 
 void gameover::do_delete()
 {
+    QApplication::quit();
     delete this;
 }

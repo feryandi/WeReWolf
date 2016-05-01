@@ -40,6 +40,7 @@ class handler_client : public QObject
         void prepare_proposal();
         void accept_proposal();
         void sendResponse(QString address, quint16 port, QString status, QString description);
+        void do_delete();
 
     private:
         QUdpSocket *socket;
@@ -48,6 +49,8 @@ class handler_client : public QObject
         int counter_prepare;
         int counter_accept;
         int last_KPU;
+
+        int hardcode_player;
 
 };
 

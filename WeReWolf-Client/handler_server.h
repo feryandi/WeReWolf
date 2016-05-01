@@ -54,6 +54,7 @@ class handler_server : public QObject
         void statusDisconnected();
         void sendMessageJSON(QJsonObject message);
         void readMessage();
+        void do_delete();
 
     private:
         QTcpSocket *socket;

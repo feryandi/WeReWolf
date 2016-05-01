@@ -262,3 +262,8 @@ int handler_server::getDeadPlayer() {
     }
     return ret;
 }
+
+void handler_server::do_delete(){
+    delete this;
+}
+

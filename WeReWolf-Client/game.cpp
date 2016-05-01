@@ -85,16 +85,20 @@ void game::do_populate_players()
     ui->listPlayer->addItems(list_player);
     ui->listPlayer->show();
 
-    int clientID = static_cast<int>(connection_server.getPlayerId());
-    if (((clientID + 1) == size) || ((clientID + 1) == (size - 1)))
-    {
-        /* Ngirim Proposal Terus-terusan sampe kpu_id diterima */
-        qDebug() << "Ngirim Proposal";
+    if ( connection_server.getCurrentTime() == 1 ) {
+        connection_server.kpu_id = -1;
 
-        if (connection_server.kpu_id == -1){
-            timer->start(1000);
-        } else {
-            timer->stop();
+        int clientID = static_cast<int>(connection_server.getPlayerId());
+        if (((clientID + 1) == size) || ((clientID + 1) == (size - 1)))
+        {
+            /* Ngirim Proposal Terus-terusan sampe kpu_id diterima */
+            qDebug() << "Ngirim Proposal";
+
+            if (connection_server.kpu_id == -1){
+                timer->start(1000);
+            } else {
+                timer->stop();
+            }
         }
     }
 }
