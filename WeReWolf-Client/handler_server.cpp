@@ -203,6 +203,15 @@ QJsonObject handler_server::getClientDataByUsername(QString username){
     return ret;
 }
 
+QJsonObject handler_server::getClientDataById(int id){
+    QJsonObject ret;
+    for (int i=0; i<clients.size(); i++){
+        if (clients.at(i).toObject().value("player_id").toInt() == id){
+            ret = clients.at(i).toObject();
+        }
+    }
+    return ret;
+}
 
 QJsonArray handler_server::getNonFriends()
 {

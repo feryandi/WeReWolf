@@ -154,7 +154,7 @@ class GameServer:
 		class message(object):
 			def __init__(self):
 				self.method = "start"
-				self.time = "night"
+				self.time = "day"
 				self.role = ""
 				self.friend = []
 				self.description = "game is started"

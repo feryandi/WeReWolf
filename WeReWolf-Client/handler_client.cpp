@@ -69,113 +69,111 @@ void handler_client::readMessage()
         QJsonDocument json_document;
         QJsonObject json_object;
         QJsonValue method, status, description;
-        for (int i=0; i<message_list.size()-1; i++){
-            json_document = QJsonDocument::fromJson(message_list.at(i));
-            json_object = json_document.object();
+        json_document = QJsonDocument::fromJson(message_list.at(0));
+        json_object = json_document.object();
 
-            if (json_object.contains("status")){
-                /* Response Proposer->Acceptor */
-                status = json_object.value("status");
+        if (json_object.contains("status")){
+            /* Response Proposer->Acceptor */
+            status = json_object.value("status");
 
-                if (status == "fail" || status == "error"){
-                    description = json_object.value("description");
-                    emit on_fail_or_error(description.toString());
+            if (status == "fail" || status == "error"){
+                description = json_object.value("description");
+                emit on_fail_or_error(description.toString());
 
-                } else if (last_sent_method == "prepare_proposal" && status == "ok"){
-                    counter_prepare++;
-                    qDebug() << "Prepare Counter Sekarang = " << counter_prepare;
-                    if (counter_prepare == connection_server.getClients().size()-1){
-                        accept_proposal();
-                    }
-                } else if (last_sent_method == "accept_proposal" && status == "ok"){
-                    /*QJsonObject json_object_;
-                    json_object_.insert("method", "accepted_proposal");
-                    json_object_.insert("kpu_id", last_KPU);
-                    json_object_.insert("Description", "Kpu is selected");
-
-                    connection_server.sendMessageJSON(json_object_);*/
-                } else if (last_sent_method == "vote_werewolf" && status == "ok"){
-
+            } else if (last_sent_method == "prepare_proposal" && status == "ok"){
+                counter_prepare++;
+                qDebug() << "Prepare Counter Sekarang = " << counter_prepare;
+                if (counter_prepare == connection_server.getClients().size()-1){
+                    accept_proposal();
                 }
+            } else if (last_sent_method == "accept_proposal" && status == "ok"){
+                /*QJsonObject json_object_;
+                json_object_.insert("method", "accepted_proposal");
+                json_object_.insert("kpu_id", last_KPU);
+                json_object_.insert("Description", "Kpu is selected");
 
-            } else if (json_object.contains("method")){
-                /* Request Acceptor->Proposer */
-                method = json_object.value("method");
-                // Cek dia nerima method apa
-                if (method == "prepare_proposal"){
-                    emit on_accept_prepare_proposal(json_object,sender_ip,sender_port);
-                } else if (method == "accept_proposal"){
-                    emit on_accept_accept_proposal(json_object,sender_ip,sender_port);
-                } else if (method == "vote_werewolf") {
-                    int player_id_ = json_object.value("player_id").toInt();
-                    vote_map[player_id_]++;
+                connection_server.sendMessageJSON(json_object_);*/
+            } else if (last_sent_method == "vote_werewolf" && status == "ok"){
 
-                    counter_vote++;
+            }
 
-                    sendResponse(sender_ip.toString(),sender_port,"ok","");
+        } else if (json_object.contains("method")){
+            /* Request Acceptor->Proposer */
+            method = json_object.value("method");
+            // Cek dia nerima method apa
+            if (method == "prepare_proposal"){
+                emit on_accept_prepare_proposal(json_object,sender_ip,sender_port);
+            } else if (method == "accept_proposal"){
+                emit on_accept_accept_proposal(json_object,sender_ip,sender_port);
+            } else if (method == "vote_werewolf") {
+                int player_id_ = json_object.value("player_id").toInt();
+                vote_map[player_id_]++;
 
-                    if ( counter_vote == (1 - connection_server.getDeadWerewolf()) ) {
+                counter_vote++;
 
-                        QJsonArray json_array;
-                        QJsonArray final_array;
-                        for (int i = 0; i < connection_server.getClients().size(); i++) {
-                            json_array.insert(0, i);
-                            json_array.insert(1, vote_map[i]);
-                            final_array.insert(i, QJsonValue::fromVariant(json_array));
-                            json_array.removeFirst();
-                            json_array.removeFirst();
-                        }
+                sendResponse(sender_ip.toString(),sender_port,"ok","");
 
-                        QJsonObject message;
-                        message.insert("method", "vote_result_werewolf");
-                        int pk = getVoteResult();
-                        if ( pk != -1 ) {
-                            message.insert("vote_status", 1);
-                            message.insert("player_killed", pk);
-                        } else {
-                            message.insert("vote_status", -1);
-                        }
-                        message.insert("vote_result", final_array);
+                if ( counter_vote == (1 - connection_server.getDeadWerewolf()) ) {
 
-                        connection_server.sendMessageJSON(message);
-
-                        counter_vote = 0;
+                    QJsonArray json_array;
+                    QJsonArray final_array;
+                    for (int i = 0; i < connection_server.getClients().size(); i++) {
+                        json_array.insert(0, i);
+                        json_array.insert(1, vote_map[i]);
+                        final_array.insert(i, QJsonValue::fromVariant(json_array));
+                        json_array.removeFirst();
+                        json_array.removeFirst();
                     }
-                } else if (method == "vote_civilian") {
-                    int player_id_ = json_object.value("player_id").toInt();
-                    vote_map[player_id_]++;
 
-                    counter_vote++;
-
-                    sendResponse(sender_ip.toString(),sender_port,"ok","");
-
-                    if ( counter_vote == (3 - connection_server.getDeadPlayer()) ) {
-
-                        QJsonArray json_array;
-                        QJsonArray final_array;
-                        for (int i = 0; i < connection_server.getClients().size(); i++) {
-                            json_array.insert(0, i);
-                            json_array.insert(1, vote_map[i]);
-                            final_array.insert(i, QJsonValue::fromVariant(json_array));
-                            json_array.removeFirst();
-                            json_array.removeFirst();
-                        }
-
-                        QJsonObject message;
-                        message.insert("method", "vote_result_civilian");
-                        int pk = getVoteResult();
-                        if ( pk != -1 ) {
-                            message.insert("vote_status", 1);
-                            message.insert("player_killed", pk);
-                        } else {
-                            message.insert("vote_status", -1);
-                        }
-                        message.insert("vote_result", final_array);
-
-                        connection_server.sendMessageJSON(message);
-
-                        counter_vote = 0;
+                    QJsonObject message;
+                    message.insert("method", "vote_result_werewolf");
+                    int pk = getVoteResult();
+                    if ( pk != -1 ) {
+                        message.insert("vote_status", 1);
+                        message.insert("player_killed", pk);
+                    } else {
+                        message.insert("vote_status", -1);
                     }
+                    message.insert("vote_result", final_array);
+
+                    connection_server.sendMessageJSON(message);
+
+                    counter_vote = 0;
+                }
+            } else if (method == "vote_civilian") {
+                int player_id_ = json_object.value("player_id").toInt();
+                vote_map[player_id_]++;
+
+                counter_vote++;
+
+                sendResponse(sender_ip.toString(),sender_port,"ok","");
+
+                if ( counter_vote == (3 - connection_server.getDeadPlayer()) ) {
+
+                    QJsonArray json_array;
+                    QJsonArray final_array;
+                    for (int i = 0; i < connection_server.getClients().size(); i++) {
+                        json_array.insert(0, i);
+                        json_array.insert(1, vote_map[i]);
+                        final_array.insert(i, QJsonValue::fromVariant(json_array));
+                        json_array.removeFirst();
+                        json_array.removeFirst();
+                    }
+
+                    QJsonObject message;
+                    message.insert("method", "vote_result_civilian");
+                    int pk = getVoteResult();
+                    if ( pk != -1 ) {
+                        message.insert("vote_status", 1);
+                        message.insert("player_killed", pk);
+                    } else {
+                        message.insert("vote_status", -1);
+                    }
+                    message.insert("vote_result", final_array);
+
+                    connection_server.sendMessageJSON(message);
+
+                    counter_vote = 0;
                 }
             }
         }

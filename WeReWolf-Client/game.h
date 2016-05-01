@@ -2,7 +2,8 @@
 #define GAME_H
 
 #include <QMainWindow>
-#include <QTimer>
+#include <QTime>
+#include <QMutex>
 #include "handler_server.h"
 #include "handler_client.h"
 
@@ -32,6 +33,7 @@ private slots:
 
 private:
     Ui::game *ui;
+    QMutex mutex;
 };
 
 #endif // GAME_H

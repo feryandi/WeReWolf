@@ -81,13 +81,6 @@ void game::do_populate_players()
 
     qDebug() << "Total client: " << connection_server.getClients().size();
 
-    int clientID = static_cast<int>(connection_server.getPlayerId());
-    if (((clientID + 1) == size) || ((clientID + 1) == (size - 1)))
-    {
-        qDebug() << "Ngirim Proposal";
-        connection_client.prepare_proposal();
-    }
-
     QJsonObject player_data;
     player_data = connection_server.getClientDataByUsername(connection_server.getPlayerName());
     if (player_data.value("is_alive").toInt() == 0) {
@@ -95,9 +88,22 @@ void game::do_populate_players()
         ui->buttonVote->setDisabled(true);
     }
 
-
     ui->listPlayer->addItems(list_player);
     ui->listPlayer->show();
+
+    int clientID = static_cast<int>(connection_server.getPlayerId());
+    if (((clientID + 1) == size) || ((clientID + 1) == (size - 1)))
+    {
+        /* Ngirim Proposal Terus-terusan sampe kpu_id diterima */
+        qDebug() << "Ngirim Proposal";
+        //while(connection_server.kpu_id == -1){
+            connection_client.prepare_proposal();
+           // QTime dieTime= QTime::currentTime().addSecs(1);
+            //    while (QTime::currentTime() < dieTime)
+           //         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+
+        //}
+    }
 }
 
 void game::do_set_rule(QJsonObject message)
@@ -125,6 +131,7 @@ void game::do_set_rule(QJsonObject message)
 
 void game::do_proposal_prepare(QJsonObject message, QHostAddress sender_ip, quint16 sender_port)
 {
+    mutex.lock();
     int c = message.value("proposal_id").toArray().at(0).toInt();
     int recentCounter = connection_client.getCounterLocal();
     int newKPU = message.value("proposal_id").toArray().at(1).toInt();
@@ -159,6 +166,9 @@ void game::do_proposal_prepare(QJsonObject message, QHostAddress sender_ip, quin
         }
 
         connection_client.setLastKPU(newKPU);
+        qDebug() << "Sender IP Luqman: " << sender_ip;
+        qDebug() << "Sender Port Luqman: " << sender_port;
+
         connection_client.sendMessage(sender_ip.toString(), sender_port, json_object);
 
         qDebug() << "Accepting proposal from " << message.value("proposal_id").toArray().at(1) << " with value " << c;
@@ -167,10 +177,12 @@ void game::do_proposal_prepare(QJsonObject message, QHostAddress sender_ip, quin
         json_object.insert("description","rejected");
         connection_client.sendMessage(sender_ip.toString(), sender_port, json_object);
     }
+    mutex.unlock();
 }
 
 void game::do_proposal_accept(QJsonObject message, QHostAddress sender_ip, quint16 sender_port)
 {
+    mutex.lock();
     int c = message.value("proposal_id").toArray().at(0).toInt();
     int recentCounter = connection_client.getCounterLocal();
     int playerId = message.value("proposal_id").toArray().at(1).toInt();
@@ -203,6 +215,7 @@ void game::do_proposal_accept(QJsonObject message, QHostAddress sender_ip, quint
         json_object.insert("description","rejected");
         connection_client.sendMessage(sender_ip.toString(), sender_port, json_object);
     }
+    mutex.unlock();
 }
 
 
