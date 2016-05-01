@@ -71,10 +71,10 @@ void game::do_populate_players()
         for (int i=0; i<json_array.size(); i++){
             list_player += json_array.at(i).toString();
         }
-
+        /*
         if (connection_server.getRole() == "villager"){
             ui->buttonVote->setDisabled(true);
-        }
+        }*/
 
         qDebug() << "Total non-friends: " << json_array.size();
     }
@@ -190,6 +190,14 @@ void game::do_proposal_accept(QJsonObject message, QHostAddress sender_ip, quint
 
         connection_client.sendMessage(sender_ip.toString(), QString::number(sender_port), json_object);
         qDebug() << "Konfirmasi KPU " << message.value("proposal_id").toArray().at(1) << " with value " << c;
+
+        QJsonObject json_object_;
+        json_object_.insert("method", "accepted_proposal");
+        json_object_.insert("kpu_id", connection_client.getLastKPU());
+        json_object_.insert("Description", "Kpu is selected");
+
+        connection_server.sendMessageJSON(json_object_);
+
     } else {
         json_object.insert("status","fail");
         json_object.insert("description","rejected");
@@ -247,4 +255,10 @@ void game::do_set_kpu_selected()
 void game::do_vote_now()
 {
     ui->buttonVote->setEnabled(true);
+
+    if ( connection_server.getCurrentTime() == 0 ) {
+        if (connection_server.getRole() == "villager"){
+            ui->buttonVote->setDisabled(true);
+        }
+    }
 }

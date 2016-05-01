@@ -88,12 +88,12 @@ void handler_client::readMessage()
                         accept_proposal();
                     }
                 } else if (last_sent_method == "accept_proposal" && status == "ok"){
-                    QJsonObject json_object_;
+                    /*QJsonObject json_object_;
                     json_object_.insert("method", "accepted_proposal");
                     json_object_.insert("kpu_id", last_KPU);
                     json_object_.insert("Description", "Kpu is selected");
 
-                    connection_server.sendMessageJSON(json_object_);
+                    connection_server.sendMessageJSON(json_object_);*/
                 } else if (last_sent_method == "vote_werewolf" && status == "ok"){
 
                 }

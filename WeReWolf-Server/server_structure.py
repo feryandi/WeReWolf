@@ -261,6 +261,9 @@ class MessageServer:
 	def interpreter (self, message, clientsocket, GameServer):
 		msg = json.loads(message)
 
+		if 'method' not in msg:
+			return
+
 		if msg['method'] == 'join':
 			if msg['username'] != "":
 				if GameServer.getPlayerByUsername(msg['username']) == -1:
@@ -324,7 +327,7 @@ class MessageServer:
 										  "description":"Civilian cannot decide. No one killed."})					
 
 		elif msg['method'] == 'accepted_proposal':
-			print "Accepted Proposal"
+			print "Accepted Proposal from ", self.clientid
 
 			GameServer.setKPUCount(msg['kpu_id'], GameServer.getKPUCount(msg['kpu_id']) + 1)
 			GameServer.increaseKPUVoted()
@@ -333,7 +336,7 @@ class MessageServer:
 			print "Voted for KPU ", GameServer.getKPUVoted()
 			print "Quorum ", ((GameServer.getTotalPlayer()//2) + 1)
 
-			if (GameServer.getKPUVoted() > ((GameServer.getTotalPlayer()//2) + 1)):
+			if (GameServer.getKPUVoted() >= ((GameServer.getTotalPlayer()//2) + 1)):
 				kpu_id = GameServer.getConsensusKPU()
 				GameServer.resetKPUVoted()
 				GameServer.resetKPUCount()
