@@ -250,6 +250,7 @@ void game::on_buttonVote_clicked()
             connection_client.sendMessage(sender_ip, sender_port, json_object,1);
         }
     }
+    ui->buttonVote->setDisabled(true);
 }
 
 void game::do_delete() {

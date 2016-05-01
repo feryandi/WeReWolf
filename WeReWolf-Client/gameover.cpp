@@ -22,8 +22,8 @@ void gameover::closeEvent(QCloseEvent *event)
 void gameover::on_buttonOK_clicked()
 {
     QJsonObject json_object;
-        json_object.insert("method", "leave");
-        connection_server.sendMessageJSON(json_object);
+    json_object.insert("method", "leave");
+    connection_server.sendMessageJSON(json_object);
     emit on_deletegameover();
 }
 

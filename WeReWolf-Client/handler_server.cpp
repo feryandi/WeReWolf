@@ -120,6 +120,9 @@ void handler_server::readMessage()
         if (json_object.contains("status")){
             /* Response Client->Server */
             status = json_object.value("status");
+            qDebug() << "LAST METHOD = " << last_sent_method;
+            qDebug() << "RESPONSE = " << status;
+
 
             if (status == "fail" || status == "error"){
                 description = json_object.value("description");
@@ -146,10 +149,9 @@ void handler_server::readMessage()
                     client_ = json_object.value("clients").toArray().at(i).toObject();
                     clients.push_back(client_);
                 }
-                qDebug() << "AARGHH" << clients;
+                qDebug() << "List Client : " << clients;
 
                 emit on_get_clients();
-
             }
         } else if (json_object.contains("method")){
             /* Request Server->Client */
