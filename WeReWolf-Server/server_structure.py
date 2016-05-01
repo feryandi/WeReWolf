@@ -324,23 +324,22 @@ class MessageServer:
 										  "description":"Civilian cannot decide. No one killed."})					
 
 		elif msg['method'] == 'accepted_proposal':
+			print "Accepted Proposal"
+
 			GameServer.setKPUCount(msg['kpu_id'], GameServer.getKPUCount(msg['kpu_id']) + 1)
 			GameServer.increaseKPUVoted()
 			self.sendResponse(clientsocket, json.dumps({"status":"ok", "description":"KPU is selected"}))
+
+			print "Voted for KPU ", GameServer.getKPUVoted()
+			print "Quorum ", ((GameServer.getTotalPlayer()//2) + 1)
 
 			if (GameServer.getKPUVoted() > ((GameServer.getTotalPlayer()//2) + 1)):
 				kpu_id = GameServer.getConsensusKPU()
 				GameServer.resetKPUVoted()
 				GameServer.resetKPUCount()
 
-				for player in self.players:
-					if ( player != "" ):
-						player.getIPort().send(json.dumps({"method":"kpu_selected", "kpu_id":kpu_id}) + "\r\n")
-
-
-				for player in self.players:
-					if ( player != "" ):
-						player.getIPort().send(json.dumps({"method":"vote_now", "phase":(GameServer.getGame()).getDay()}) + "\r\n")
+				GameServer.broadcast({"method":"kpu_selected", "kpu_id":kpu_id})
+				GameServer.broadcast({"method":"vote_now", "phase":(GameServer.getGame()).getDay()})
 
 			#(GameServer.getGame()).setKPU(msg['kpu_id'])
 
