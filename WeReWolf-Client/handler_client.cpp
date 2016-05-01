@@ -180,14 +180,19 @@ void handler_client::readMessage()
     }
 }
 
-void handler_client::sendMessage(QString recv_address, quint16 recv_port, QJsonObject message)
+void handler_client::sendMessage(QString recv_address, quint16 recv_port, QJsonObject message, int tag)
 {
-    QJsonDocument json_document;
-    json_document.setObject(message);
-    qDebug() << "SEND UDP DATAGRAM: " << json_document;
-    socket->writeDatagram((json_document.toJson(QJsonDocument::Compact) + "\n"), QHostAddress(recv_address), recv_port);
-    if (message.value("method").toString() != ""){
-        last_sent_method = message.value("method").toString();
+    double rand = qrand() % 100 + 1;
+    if ((rand < 85) || (tag == 1)) {
+        QJsonDocument json_document;
+        json_document.setObject(message);
+        qDebug() << "SEND UDP DATAGRAM: " << json_document;
+        socket->writeDatagram((json_document.toJson(QJsonDocument::Compact) + "\n"), QHostAddress(recv_address), recv_port);
+        if (message.value("method").toString() != ""){
+            last_sent_method = message.value("method").toString();
+        }
+    } else {
+        qDebug() << "Unreliable Connection";
     }
 }
 
@@ -223,7 +228,7 @@ void handler_client::prepare_proposal()
 
                 connection_client.setLastKPU(playerid.toInt());
 
-                sendMessage(address,port,message);
+                sendMessage(address,port,message,0);
             }
         }
     }
@@ -260,7 +265,7 @@ void handler_client::accept_proposal()
             message.insert("proposal_id", json_array);
             message.insert("kpu_id", playerid);
 
-            sendMessage(address,port,message);
+            sendMessage(address,port,message,0);
         }
     }
 }
@@ -270,7 +275,7 @@ void handler_client::sendResponse(QString address, quint16 port, QString status,
     QJsonObject json_object;
     json_object.insert("status",status);
     json_object.insert("description",description);
-    sendMessage(address,port,json_object);
+    sendMessage(address,port,json_object,0);
 }
 
 int handler_client::getVoteResult() {
