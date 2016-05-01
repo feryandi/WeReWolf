@@ -2,47 +2,44 @@
 
 handler_client connection_client;
 
-handler_client::handler_client(QObject *parent) : QObject(parent), last_KPU(-1), counter_vote(0), hardcode_player(6)
-{
+handler_client::handler_client(QObject *parent) : QObject(parent) {
+    last_KPU = -1;
+    counter_vote = 0;
+    counter_accept = 0;
+    counter_local = 0;
+    counter_prepare = 0;
+    hardcode_player = 6;
 }
 
-int handler_client::getCounterLocal()
-{
+int handler_client::getCounterLocal() {
     return counter_local;
 }
 
-int handler_client::getCounterPrepare()
-{
+int handler_client::getCounterPrepare() {
     return counter_prepare;
 }
 
-int handler_client::getCounterAccept()
-{
+int handler_client::getCounterAccept() {
     return counter_accept;
 }
 
-int handler_client::getLastKPU()
-{
+int handler_client::getLastKPU() {
     return last_KPU;
 }
 
-void handler_client::setCounter(int c)
-{
+void handler_client::setCounter(int c) {
     counter_local = c;
 }
 
-void handler_client::setLastKPU(int c)
-{
+void handler_client::setLastKPU(int c) {
     last_KPU = c;
 }
 
-void handler_client::resetCounter()
-{
+void handler_client::resetCounter() {
     counter_local = 0;
 }
 
-void handler_client::doListen(quint16 client_port)
-{
+void handler_client::doListen(quint16 client_port) {
     socket = new QUdpSocket(this);
     connect(socket, SIGNAL(readyRead()), this, SLOT(readMessage()));
 
@@ -51,8 +48,7 @@ void handler_client::doListen(quint16 client_port)
     socket->bind(QHostAddress::Any, client_port);
 }
 
-void handler_client::readMessage()
-{
+void handler_client::readMessage() {
     while (socket->hasPendingDatagrams()) {
         QByteArray message;
         message.resize(socket->pendingDatagramSize());
@@ -72,7 +68,7 @@ void handler_client::readMessage()
         json_document = QJsonDocument::fromJson(message_list.at(0));
         json_object = json_document.object();
 
-        if (json_object.contains("status")){
+        if (json_object.contains("status")) {
             /* Response Proposer->Acceptor */
             status = json_object.value("status");
 
@@ -80,24 +76,15 @@ void handler_client::readMessage()
                 description = json_object.value("description");
                 emit on_fail_or_error(description.toString());
 
-            } else if (last_sent_method == "prepare_proposal" && status == "ok"){
+            } else if (last_sent_method == "prepare_proposal" && status == "ok") {
                 counter_prepare++;
                 qDebug() << "Prepare Counter Sekarang = " << counter_prepare;
-                if (counter_prepare == connection_server.getClients().size()-1){
+                if (counter_prepare == connection_server.getClients().size()-1) {
                     accept_proposal();
                 }
-            } else if (last_sent_method == "accept_proposal" && status == "ok"){
-                /*QJsonObject json_object_;
-                json_object_.insert("method", "accepted_proposal");
-                json_object_.insert("kpu_id", last_KPU);
-                json_object_.insert("Description", "Kpu is selected");
-
-                connection_server.sendMessageJSON(json_object_);*/
-            } else if (last_sent_method == "vote_werewolf" && status == "ok"){
-
             }
 
-        } else if (json_object.contains("method")){
+        } else if (json_object.contains("method")) {
             /* Request Acceptor->Proposer */
             method = json_object.value("method");
             // Cek dia nerima method apa
@@ -180,8 +167,8 @@ void handler_client::readMessage()
     }
 }
 
-void handler_client::sendMessage(QString recv_address, quint16 recv_port, QJsonObject message, int tag)
-{
+void handler_client::sendMessage(QString recv_address, quint16 recv_port, QJsonObject message, int tag) {
+    /* Simulate unreliable connection */
     double rand = qrand() % 100 + 1;
     if ((rand < 85) || (tag == 1)) {
         QJsonDocument json_document;
@@ -196,19 +183,16 @@ void handler_client::sendMessage(QString recv_address, quint16 recv_port, QJsonO
     }
 }
 
-void handler_client::prepare_proposal()
-{
+void handler_client::prepare_proposal() {
     if (connection_server.getKpuId()) {
         int size = connection_server.getClients().size();
         int newcounter = connection_client.getCounterLocal() + 1;
         counter_prepare = 0;
-        for (int i = 0; i < size; i++)
-        {
+        for (int i = 0; i < size; i++) {
             QJsonValue playerid;
             playerid = connection_server.getPlayerId();
 
-            if (i != playerid.toInt())
-            {
+            if (i != playerid.toInt()) {
                 QJsonObject json_object = connection_server.getClients().at(i).toObject();
                 qDebug() << json_object;
                 QString address = json_object.value("address").toString();
@@ -234,18 +218,15 @@ void handler_client::prepare_proposal()
     }
 }
 
-void handler_client::accept_proposal()
-{
+void handler_client::accept_proposal() {
     int size = connection_server.getClients().size();
     int counter = connection_client.getCounterLocal();
     counter_prepare = 0;
-    for (int i = 0; i < size; i++)
-    {
+    for (int i = 0; i < size; i++) {
         QJsonValue playerid;
         playerid = connection_server.getPlayerId();
 
-        if (i != playerid.toInt())
-        {
+        if (i != playerid.toInt()) {
             QJsonObject json_object = connection_server.getClients().at(i).toObject();
             qDebug() << json_object;
             QString address = json_object.value("address").toString();
@@ -270,8 +251,7 @@ void handler_client::accept_proposal()
     }
 }
 
-void handler_client::sendResponse(QString address, quint16 port, QString status, QString description)
-{
+void handler_client::sendResponse(QString address, quint16 port, QString status, QString description) {
     QJsonObject json_object;
     json_object.insert("status",status);
     json_object.insert("description",description);

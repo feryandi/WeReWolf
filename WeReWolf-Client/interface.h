@@ -10,9 +10,9 @@
 
 
 
-class interface : public QObject
-{
+class interface : public QObject {
         Q_OBJECT
+
     public:
         explicit interface(QObject *parent = 0);
 

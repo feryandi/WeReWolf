@@ -10,9 +10,9 @@
 #include <map>
 #include "handler_server.h"
 
-class handler_client : public QObject
-{
+class handler_client : public QObject {
         Q_OBJECT
+
     public:
         explicit handler_client(QObject *parent = 0);
         void doListen(quint16 client_port);

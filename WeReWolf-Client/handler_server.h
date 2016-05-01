@@ -11,9 +11,9 @@
 #include <QJsonValue>
 #include <QApplication>
 
-class handler_server : public QObject
-{
+class handler_server : public QObject {
         Q_OBJECT
+
     public:
         explicit handler_server(QObject *parent = 0);
         void doConnect(QString server_ip, quint16 server_port);

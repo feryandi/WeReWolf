@@ -1,7 +1,6 @@
 #include "interface.h"
 
-interface::interface(QObject *parent) : QObject(parent)
-{
+interface::interface(QObject *parent) : QObject(parent) {
     connect(&connection_server, SIGNAL(on_login()), this, SLOT(do_login()));
 
     /* Create user interface */
@@ -13,8 +12,7 @@ interface::interface(QObject *parent) : QObject(parent)
     w_login->show();
 }
 
-void interface ::do_login()
-{
+void interface ::do_login() {
     connect(&connection_server, SIGNAL(on_ready()), w_game, SLOT(do_wait_until_start()));
     connect(&connection_server, SIGNAL(on_get_clients()), w_game, SLOT(do_populate_players()));
     connect(&connection_server, SIGNAL(on_start()), w_game, SLOT(do_start()));

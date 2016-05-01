@@ -2,15 +2,13 @@
 
 handler_server connection_server;
 
-handler_server::handler_server(QObject *parent) : QObject(parent)
-{
+handler_server::handler_server(QObject *parent) : QObject(parent) {
     last_sent_method = "";
     kpu_id = -1;
     game_over = false;
 }
 
-void handler_server::doConnect(QString server_ip, quint16 server_port)
-{
+void handler_server::doConnect(QString server_ip, quint16 server_port) {
     socket = new QTcpSocket(this);
     connect(socket, SIGNAL(connected()), this, SLOT(statusConnected()));
     connect(socket, SIGNAL(disconnected()), this, SLOT(statusDisconnected()));
@@ -31,88 +29,80 @@ void handler_server::doConnect(QString server_ip, quint16 server_port)
 }
 
 
-void handler_server::setKpuId(int kpu_id_){
+void handler_server::setKpuId(int kpu_id_) {
     kpu_id = kpu_id_;
 }
 
-int handler_server::getKpuId(){
+int handler_server::getKpuId() {
     return kpu_id;
 }
 
-QString handler_server::getLocalAddress()
-{
+QString handler_server::getLocalAddress() {
     return local_address.toString();
 }
 
-QVector<QString> handler_server::getFriends()
-{
+QVector<QString> handler_server::getFriends() {
     return friends;
 }
 
-QJsonArray handler_server::getClients()
-{
+QJsonArray handler_server::getClients() {
     return clients;
 }
 
-QString handler_server::getRole()
-{
+QString handler_server::getRole() {
     return player_role;
 }
 
-int handler_server::getPlayerId()
-{
+int handler_server::getPlayerId() {
     return player_id;
 }
 
-int handler_server::getCurrentTime()
-{
+int handler_server::getCurrentTime() {
     return current_time;
 }
 
-void handler_server::setCurrentTime(QString current_time_)
-{
-    if (current_time_ == "night"){
+void handler_server::setCurrentTime(QString current_time_) {
+    if (current_time_ == "night") {
         current_time = 0;
     } else {
         current_time = 1;
     }
 }
 
-int handler_server::getClientIdByUsername(QString username){
+int handler_server::getClientIdByUsername(QString username) {
     for (int i=0; i<clients.size(); i++){
-        if (clients.at(i).toObject().value("username").toString() == username){
+        if (clients.at(i).toObject().value("username").toString() == username) {
             return clients.at(i).toObject().value("player_id").toInt();
         }
     }
     return -1;
 }
 
-QJsonObject handler_server::getClientDataByUsername(QString username){
+QJsonObject handler_server::getClientDataByUsername(QString username) {
     QJsonObject ret;
     for (int i=0; i<clients.size(); i++){
-        if (clients.at(i).toObject().value("username").toString() == username){
+        if (clients.at(i).toObject().value("username").toString() == username) {
             ret = clients.at(i).toObject();
         }
     }
     return ret;
 }
 
-QJsonObject handler_server::getClientDataById(int id){
+QJsonObject handler_server::getClientDataById(int id) {
     QJsonObject ret;
     for (int i=0; i<clients.size(); i++){
-        if (clients.at(i).toObject().value("player_id").toInt() == id){
+        if (clients.at(i).toObject().value("player_id").toInt() == id) {
             ret = clients.at(i).toObject();
         }
     }
     return ret;
 }
 
-QJsonArray handler_server::getNonFriends()
-{
+QJsonArray handler_server::getNonFriends() {
     QJsonArray ret;
-    for (int i=0; i<clients.size(); i++){
+    for (int i=0; i<clients.size(); i++) {
         bool is_friend = false;
-        for (int j=0; j<friends.size(); j++){
+        for (int j=0; j<friends.size(); j++) {
             if ( friends.at(j) == clients.at(i).toObject().value("username").toString() ) {
                 is_friend = true;
             }
@@ -125,11 +115,11 @@ QJsonArray handler_server::getNonFriends()
     return ret;
 }
 
-QString handler_server::getPlayerName(){
+QString handler_server::getPlayerName() {
     return player_name;
 }
 
-void handler_server::setPlayerName(QString player_name_){
+void handler_server::setPlayerName(QString player_name_) {
     player_name = player_name_;
 }
 
@@ -155,13 +145,12 @@ int handler_server::getDeadPlayer() {
     return ret;
 }
 
-void handler_server::sendMessageJSON(QJsonObject message)
-{
+void handler_server::sendMessageJSON(QJsonObject message) {
     qDebug() << "Writing message = " << message;
 
     QJsonDocument json_document;
     json_document.setObject(message);
-    if (socket->write(json_document.toJson(QJsonDocument::Compact) + "\n") < 0){
+    if (socket->write(json_document.toJson(QJsonDocument::Compact) + "\n") < 0) {
         qDebug() << "Error: " << socket->errorString();
     } else{
 
@@ -177,14 +166,14 @@ void handler_server::readMessage() {
     QJsonDocument json_document;
     QJsonObject json_object;
     QJsonValue method, status, description;
-    for (int i=0; i<message_list.size(); i++){
+    for (int i=0; i<message_list.size(); i++) {
         json_document = QJsonDocument::fromJson(message_list.at(i));
         json_object = json_document.object();
 
         if (json_object.contains("status")){
             /* Response Client->Server */
             status = json_object.value("status");
-            if (status == "fail" || status == "error"){
+            if (status == "fail" || status == "error") {
                 /* Fail or error response  */
                 if (status == "fail") {
                     qDebug() << "Fail : " << json_object.value("description");

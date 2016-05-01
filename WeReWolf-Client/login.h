@@ -7,22 +7,22 @@
 #include "handler_client.h"
 
 namespace Ui {
-class login;
+    class login;
 }
 
-class login : public QMainWindow
-{
-    Q_OBJECT
+class login : public QMainWindow {
+        Q_OBJECT
 
-public:
-    explicit login(QWidget *parent = 0);
-    ~login();
+    public:
+        explicit login(QWidget *parent = 0);
+        ~login();
 
-private slots:
-    void on_buttonPlay_clicked();
+    private slots:
+        void on_buttonPlay_clicked();
+        void do_destroy();
 
-private:
-    Ui::login *ui;
+    private:
+        Ui::login *ui;
 
 };
 

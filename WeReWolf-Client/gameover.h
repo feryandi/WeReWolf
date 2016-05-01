@@ -7,24 +7,23 @@
 #include "handler_server.h"
 
 namespace Ui {
-class gameover;
+    class gameover;
 }
 
-class gameover : public QDialog
-{
-    Q_OBJECT
+class gameover : public QDialog {
+        Q_OBJECT
 
-public:
-    explicit gameover(QWidget *parent = 0);
-    ~gameover();
-    void closeEvent(QCloseEvent *event);
+    public:
+        explicit gameover(QWidget *parent = 0);
+        ~gameover();
+        void closeEvent(QCloseEvent *event);
 
-private slots:
-    void on_buttonOK_clicked();
-    void do_show(QJsonObject data);
+    private slots:
+        void on_buttonOK_clicked();
+        void do_show(QJsonObject data);
 
-private:
-    Ui::gameover *ui;
+    private:
+        Ui::gameover *ui;
 };
 
 #endif // GAMEOVER_H
