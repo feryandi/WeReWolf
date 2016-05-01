@@ -2,6 +2,7 @@
 #define LOGIN_H
 
 #include <QMainWindow>
+#include <QFileInfo>
 #include "handler_server.h"
 #include "handler_client.h"
 

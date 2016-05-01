@@ -34,30 +34,6 @@
     <string>OK</string>
    </property>
   </widget>
-  <widget class="QLabel" name="labelGameover">
-   <property name="geometry">
-    <rect>
-     <x>60</x>
-     <y>80</y>
-     <width>271</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Lato</family>
-     <pointsize>20</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>Game Over :(</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignCenter</set>
-   </property>
-  </widget>
   <widget class="QLabel" name="labelWinner">
    <property name="geometry">
     <rect>
@@ -80,7 +56,25 @@
     <set>Qt::AlignCenter</set>
    </property>
   </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>411</width>
+     <height>301</height>
+    </rect>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="resources.qrc">:/assets/gameover-bg.png</pixmap>
+   </property>
+  </widget>
+  <zorder>label</zorder>
+  <zorder>buttonOK</zorder>
+  <zorder>labelWinner</zorder>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

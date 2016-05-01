@@ -9,11 +9,12 @@ game::game(QWidget *parent) :
     connect(timer, SIGNAL(timeout()), &connection_client, SLOT(prepare_proposal()));
 
     ui->setupUi(this);
-    ui->labelTime->setText("Please press READY to start the game!");
+    ui->labelRole->setStyleSheet("QLabel { color : white; }");
+    ui->labelRole->setText("Please press READY to start the game!");
+    ui->labelTime->setText("No Questionaire Today!");
     ui->textNarration->setText("When the night comes, it's time for darkness to approach.");
     ui->textNarration->setAlignment(Qt::AlignHCenter);
     ui->listPlayer->hide();
-    ui->labelRole->hide();
 }
 
 game::~game()
@@ -23,14 +24,14 @@ game::~game()
 
 void game::do_start()
 {
-    ui->labelRole->setText(connection_server.getPlayerName() + ", you are " + connection_server.getRole() + "!");
+    ui->labelRole->setText(connection_server.getPlayerName() + ", you are [" + connection_server.getRole() + "]");
     ui->labelRole->show();
     ui->buttonVote->setText("Vote!");
 }
 
 void game::do_wait_until_start()
 {
-    ui->labelTime->setText("Please wait for other players...");
+    ui->labelRole->setText("Please wait for other players...");
     ui->buttonVote->setDisabled(true);
 }
 
@@ -123,7 +124,14 @@ void game::do_populate_players()
 
 void game::do_set_rule(QJsonObject message)
 {
-    ui->labelTime->setText(message.value("time").toString() + " - day " + QString::number(message.value("days").toInt()));
+    QString timeLabel = "?";
+    if ( message.value("time").toString() == "day" ) {
+        timeLabel = "Noon";
+    } else {
+        timeLabel = "Night";
+    }
+
+    ui->labelTime->setText(timeLabel + " - Day " + QString::number(message.value("days").toInt()));
     ui->textNarration->setText(message.value("description").toString());
 
     connection_server.setCurrentTime(message.value("time").toString());
